@@ -1,20 +1,5 @@
----
-title: Java Spring Boot
-description: A Spring Boot starter app.
-tags:
-  - Java
-  - Spring
-  - Spring Boot
----
+## [Database documentation](https://dbdocs.io/awerks/se_project?view=relationships)
 
-# Spring Boot Starter Example
+## [API documentation](https://app.swaggerhub.com/apis/softwareproject-afb/Software_project/1.0.0)
 
-This is a [Spring Boot](https://spring.io/projects/spring-boot) starter app that deploys to Railway.
-
-[![Deploy on Railway](https://railway.app/button.svg)](https://railway.app/new/template/fWEWWf)
-
-## ✨ Features
-
-- Java
-- Spring Boot
-- Spring
+## This project is a part of the Software Engineering course
