@@ -6,6 +6,11 @@
 
 ## [Backend Proxy](https://javaspringboot-production-c0c1.up.railway.app)
 
+## Local documentation in the `documentation` branch
+
+[View Local Documentation](https://github.com/awerks/software_backend/tree/documentation)
+
+
 ## Install `railway-cli`
 
 ```bash
