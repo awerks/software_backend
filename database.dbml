@@ -32,7 +32,7 @@ Table "users" {
   "birthdate" timestamp
   "username" varchar(100) [not null]
   "password" varchar(100) [not null]
-  "role" varchar(50)
+  "role" varchar(50) [not null]
 }
 
 Ref "fk_tasks_assigned_to":"users"."user_id" < "tasks"."assigned_to" [update: cascade, delete: cascade]
