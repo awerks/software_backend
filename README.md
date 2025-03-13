@@ -48,6 +48,8 @@ sudo apt install mysql-client
 mysql -h <host> -u <user> -P <port> -p <database>
 ```
 
+replace `<host>`, `<user>`, `<port>` and `<database>` with the values from the railway database variables
+
 or with `railway-cli`
 
 ```bash
@@ -61,6 +63,26 @@ railway connect
 ```
 
 access the server at `http://localhost:8080`
+
+## Install dbdocs and login
+
+```bash
+npm install -g dbdocs && dbdocs login
+```
+
+## Generate DBML
+
+```bash
+dbdocs db2dbml mysql <connection-string> -o database.dbml
+```
+
+get the connection string from the railway dashboard (`MYSQL_PUBLIC_URL`)
+
+## If you make changes to the database, publish the changes to dbdocs
+
+```bash
+dbdocs build database.dbml --project awerks/se_project
+```
 
 ## Make and push changes to the project
 
