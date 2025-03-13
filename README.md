@@ -10,7 +10,6 @@
 
 [View Local Documentation](https://github.com/awerks/software_backend/tree/documentation)
 
-
 ## Install `railway-cli`
 
 ```bash
@@ -60,6 +59,8 @@ railway connect
 ```bash
 ./mvnw spring-boot:run
 ```
+
+access the server at `http://localhost:8080`
 
 ## Make and push changes to the project
 
