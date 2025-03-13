@@ -8,11 +8,11 @@
 		<version>3.3.4</version>
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
-	<groupId>com.railway</groupId>
-	<artifactId>helloworld</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
-	<name>helloworld</name>
-	<description>Demo project for Spring Boot</description>
+	<groupId>com.seproject</groupId>
+	<artifactId>backend</artifactId>
+	<version>0.0.2-SNAPSHOT</version>
+	<name>backend</name>
+	<description>Backend API for software project</description>
 	<url/>
 	<licenses>
 		<license/>
