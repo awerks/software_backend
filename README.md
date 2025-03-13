@@ -4,7 +4,7 @@
 
 ## [API documentation](https://app.swaggerhub.com/apis/softwareproject-afb/Software_project/1.0.0)
 
-## [Backend Proxy](https://javaspringboot-production-c0c1.up.railway.app)
+## [Backend Proxy](https://se-backend.up.railway.app)
 
 ## Local documentation in the `documentation` branch
 
