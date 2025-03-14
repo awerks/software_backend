@@ -1,31 +1,5 @@
-Table "projects" {
-  "project_id" int [pk, not null, increment]
-  "name" varchar(100) [not null]
-  "creation_date" timestamp [default: `CURRENT_TIMESTAMP`]
-  "description" text
-}
-
-Table "tasks" {
-  "task_id" int [pk, not null, increment]
-  "name" varchar(100) [not null]
-  "teamspace_id" int [not null]
-  "creation_date" timestamp [default: `CURRENT_TIMESTAMP`]
-  "assigned_to" int [not null]
-  "created_by" int [not null]
-  "project_id" int [not null]
-  "status" varchar(50) [not null]
-  "deadline" timestamp
-}
-
-Table "teamspaces" {
-  "teamspace_id" int [pk, not null, increment]
-  "name" varchar(100) [not null]
-  "creation_date" timestamp [default: `CURRENT_TIMESTAMP`]
-  "creator_id" int [not null]
-}
-
 Table "users" {
-  "user_id" int [pk, not null, increment]
+  "user_id" int4 [pk, not null, increment]
   "name" varchar(100) [not null]
   "last_name" varchar(100)
   "email" varchar(255)
@@ -33,6 +7,32 @@ Table "users" {
   "username" varchar(100) [not null]
   "password" varchar(100) [not null]
   "role" varchar(50) [not null]
+}
+
+Table "projects" {
+  "project_id" int4 [pk, not null, increment]
+  "name" varchar(100) [not null]
+  "creation_date" timestamp [default: `CURRENT_TIMESTAMP`]
+  "description" text
+}
+
+Table "teamspaces" {
+  "teamspace_id" int4 [pk, not null, increment]
+  "name" varchar(100) [not null]
+  "creation_date" timestamp [default: `CURRENT_TIMESTAMP`]
+  "creator_id" int4 [not null]
+}
+
+Table "tasks" {
+  "task_id" int4 [pk, not null, increment]
+  "name" varchar(100) [not null]
+  "teamspace_id" int4 [not null]
+  "creation_date" timestamp [default: `CURRENT_TIMESTAMP`]
+  "assigned_to" int4 [not null]
+  "created_by" int4 [not null]
+  "project_id" int4 [not null]
+  "status" varchar(50) [not null]
+  "deadline" timestamp
 }
 
 Ref "fk_tasks_assigned_to":"users"."user_id" < "tasks"."assigned_to" [update: cascade, delete: cascade]

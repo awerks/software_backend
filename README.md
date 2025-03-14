@@ -6,7 +6,9 @@
 
 ## [Backend Proxy](https://se-backend.up.railway.app)
 
-## Local documentation in the `documentation` branch
+## [Admin Panel](https://admin-dashboard-se-project.up.railway.app/)
+
+## Local documentation in the documentation branch
 
 [View Local Documentation](https://github.com/awerks/software_backend/tree/documentation)
 
@@ -22,38 +24,42 @@ curl -fsSL https://railway.com/install.sh | sh
 railway link
 ```
 
-## Install MySQL client
+## Install Postgres Client
 
-#### For MacOS
+#### For macOS
 
 ```bash
-brew install mysql
+brew install libpq
 ```
 
 #### For Windows
 
 ```bash
-winget install mysql
+winget install postgresql
 ```
 
 #### For Linux
 
 ```bash
-sudo apt install mysql-client
+sudo apt install postgresql-client
 ```
+
+````
 
 ## Connect to MySQL
 
 ```bash
-mysql -h <host> -u <user> -P <port> -p <database>
-```
+psql -h <host> -u <user> -P <port> -p <database>
+````
+
+enter password when prompted
 
 replace `<host>`, `<user>`, `<port>` and `<database>` with the values from the railway database variables
 
 or with `railway-cli`
 
 ```bash
-railway connect
+railway connect postgres
 ```
 
 ## Run the project locally
@@ -73,7 +79,7 @@ npm install -g dbdocs && dbdocs login
 ## Generate DBML
 
 ```bash
-dbdocs db2dbml mysql <connection-string> -o database.dbml
+dbdocs db2dbml postgres <connection-string> -o database.dbml
 ```
 
 get the connection string from the railway dashboard (`MYSQL_PUBLIC_URL`)
@@ -99,3 +105,7 @@ or using `railway-cli`
 ```bash
 railway up
 ```
+
+## License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
