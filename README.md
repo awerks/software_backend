@@ -46,7 +46,7 @@ sudo apt install postgresql-client
 
 ````
 
-## Connect to MySQL
+## Connect to Postgres
 
 ```bash
 psql -h <host> -u <user> -P <port> -p <database>
@@ -62,10 +62,30 @@ or with `railway-cli`
 railway connect postgres
 ```
 
+## Set environment variables
+
+```bash
+export SPRING_DATASOURCE_URL=<connection-string>
+export SPRING_DATASOURCE_USERNAME=<username>
+export SPRING_DATASOURCE_PASSWORD=<password>
+export SWAGGERHUB_TOKEN=<token>
+export JWT_SECRET=<your-very-long-secret-key-that-is-at-least-32-characters-long>
+```
+
+replace `<connection-string>`, `<username>`, `<password>` with the values from the railway backend variables
+for `<connection-string>` use SPRING_DATASOURCE_PUBLIC_URL from the backend variables
+and `<token>` with your SwaggerHub token
+
 ## Run the project locally
 
 ```bash
 ./mvnw spring-boot:run
+```
+
+## Push API changes to SwaggerHub
+
+```bash
+./mvnw verify
 ```
 
 access the server at `http://localhost:8080`
@@ -82,7 +102,7 @@ npm install -g dbdocs && dbdocs login
 dbdocs db2dbml postgres <connection-string> -o database.dbml
 ```
 
-get the connection string from the railway dashboard (`MYSQL_PUBLIC_URL`)
+get the connection string from the railway dashboard (`DATABASE_PUBLIC_URL`)
 
 ## If you make changes to the database, publish the changes to dbdocs
 
