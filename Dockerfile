@@ -8,6 +8,12 @@ WORKDIR /app
 # Copy files to the container image
 COPY . ./
 
+// Environment variables must be exposed at build time
+ARG SPRING_DATASOURCE_URL
+ARG SPRING_DATASOURCE_USERNAME
+ARG SPRING_DATASOURCE_PASSWORD
+ARG JWT_SECRET
+
 # Build the app.
 RUN ./mvnw -DoutputFile=target/mvn-dependency-list.log -B -DskipTests clean dependency:list install
 
