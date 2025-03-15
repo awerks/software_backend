@@ -8,7 +8,7 @@ WORKDIR /app
 # Copy files to the container image
 COPY . ./
 
-// Environment variables must be exposed at build time
+# Environment variables must be exposed at build time
 ARG SPRING_DATASOURCE_URL
 ARG SPRING_DATASOURCE_USERNAME
 ARG SPRING_DATASOURCE_PASSWORD
