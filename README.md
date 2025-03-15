@@ -85,7 +85,7 @@ and `<token>` with your SwaggerHub token
 ## Push API changes to SwaggerHub
 
 ```bash
-./mvnw verify
+./mvnw clean verify -Papi-documentation
 ```
 
 access the server at `http://localhost:8080`

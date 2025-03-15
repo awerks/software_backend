@@ -84,68 +84,75 @@
     </dependencies>
 	
 
-<build>
-	<plugins>
+<profiles>
+  <profile>
+    <id>api-documentation</id>
+    <build>
+      <plugins>
 		<plugin>
-		<groupId>org.springframework.boot</groupId>
-		<artifactId>spring-boot-maven-plugin</artifactId>
-		<configuration>
-			<jvmArguments>-Dspring.application.admin.enabled=true</jvmArguments>
-		</configuration>
-		<executions>
-			<execution>
-			<id>pre-integration-test</id>
-			<goals>
-			<goal>start</goal>
-			</goals>
-			</execution>
-			<execution>
-			<id>post-integration-test</id>
-			<goals>
-			<goal>stop</goal>
-			</goals>
-			</execution>
-		</executions>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-maven-plugin</artifactId>
+			<configuration>
+				<jvmArguments>-Dspring.application.admin.enabled=true</jvmArguments>
+			</configuration>
+			<executions>
+				<execution>
+				<id>pre-integration-test</id>
+				<goals>
+				<goal>start</goal>
+				</goals>
+				</execution>
+				<execution>
+				<id>post-integration-test</id>
+				<goals>
+				<goal>stop</goal>
+				</goals>
+				</execution>
+			</executions>
 		</plugin>
-		<plugin>
-		<groupId>org.springdoc</groupId>
-		<artifactId>springdoc-openapi-maven-plugin</artifactId>
-		<version>1.1</version>
-		<executions>
-			<execution>
-			<id>integration-test</id>
-			<goals>
-			<goal>generate</goal>
-			</goals>
-			</execution>
-		</executions>
-		<configuration>
-			<apiDocsUrl>http://localhost:8080/v3/api-docs</apiDocsUrl>
-			<outputFileName>openapi.json</outputFileName>
-			<outputDir>.</outputDir>
-			<skip>false</skip>
-		</configuration>
-		</plugin>
-			<plugin>
-				<groupId>io.swagger</groupId>
-				<artifactId>swaggerhub-maven-plugin</artifactId>
-				<version>1.0.2</version>
-				<executions>
-					<execution>
-						<phase>verify</phase>
-						<goals>
-							<goal>upload</goal>
-						</goals>
-						<configuration>
-							<api>Software_project</api>
-							<owner>softwareproject-afb</owner>
-							<version>Dev</version>
-							<inputFile>openapi.json</inputFile>
-							<token>${env.SWAGGERHUB_TOKEN}</token>
-						</configuration>
-					</execution>
-				</executions>
-			</plugin>
-        </plugins>
+        <plugin>
+          <groupId>org.springdoc</groupId>
+          <artifactId>springdoc-openapi-maven-plugin</artifactId>
+          <version>1.1</version>
+          <executions>
+            <execution>
+              <id>generate-api-doc</id>
+              <goals>
+                <goal>generate</goal>
+              </goals>
+              <configuration>
+                <apiDocsUrl>http://localhost:8080/v3/api-docs</apiDocsUrl>
+                <outputFileName>openapi.json</outputFileName>
+                <outputDir>${project.build.directory}</outputDir>
+                <skip>false</skip>
+
+              </configuration>
+            </execution>
+          </executions>
+        </plugin>
+        <plugin>
+          <groupId>io.swagger</groupId>
+          <artifactId>swaggerhub-maven-plugin</artifactId>
+          <version>1.0.2</version>
+          <executions>
+            <execution>
+              <phase>verify</phase>
+              <goals>
+                <goal>upload</goal>
+              </goals>
+              <configuration>
+                <api>Software_project</api>
+                <owner>softwareproject-afb</owner>
+                <version>Dev</version>
+                <inputFile>${project.build.directory}/openapi.json</inputFile>
+                <token>${env.SWAGGERHUB_TOKEN}</token>
+              </configuration>
+            </execution>
+          </executions>
+        </plugin>
+      </plugins>
     </build>
+  </profile>
+</profiles>
+
 </project>
