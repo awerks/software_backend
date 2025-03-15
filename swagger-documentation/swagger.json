@@ -3,10 +3,6 @@
   "info" : {
     "title" : "Teamspace Project API",
     "description" : "API documentation for the Teamspace Project, which includes user authentication, project management, teamspaces, tasks, chat, permissions, and deadline management.",
-    "contact" : {
-      "name" : "awerks",
-      "email" : "ishust@constructor.university"
-    },
     "license" : {
       "name" : "MIT",
       "url" : "https://github.com/awerks/software_backend/blob/main/LICENSE"
