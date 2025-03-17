@@ -2,6 +2,7 @@ package com.seproject.backend.entity;
 
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
 @Table(name = "users")
@@ -31,6 +32,9 @@ public class User {
 
     @Column(nullable = false, length = 50)
     private String role;
+
+    @OneToMany(mappedBy = "users", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Token> tokens;
 
     public Integer getUserId() {
         return userId;
