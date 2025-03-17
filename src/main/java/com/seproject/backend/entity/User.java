@@ -33,9 +33,6 @@ public class User {
     @Column(nullable = false, length = 50)
     private String role;
 
-    @OneToMany(mappedBy = "users", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Token> tokens;
-
     public Integer getUserId() {
         return userId;
     }
