@@ -1,9 +1,6 @@
 package com.seproject.backend.controller;
 
-import com.seproject.backend.dto.AuthResponse;
-import com.seproject.backend.dto.LoginRequest;
-import com.seproject.backend.dto.ResetRequest;
-import com.seproject.backend.dto.UserRegistration;
+import com.seproject.backend.dto.*;
 import com.seproject.backend.entity.Token;
 import com.seproject.backend.entity.User;
 
@@ -17,7 +14,6 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 
-import jakarta.validation.constraints.Email;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -25,8 +21,6 @@ import org.springframework.web.bind.annotation.*;
 import com.seproject.backend.service.EmailSender;
 
 import java.time.LocalDateTime;
-import java.util.Date;
-
 
 @RestController
 @RequestMapping("/api/auth")
@@ -91,7 +85,6 @@ public class AuthController {
             @ApiResponse(responseCode ="200", description="Reset link sent successfully.",content=@Content(mediaType="text/plain")),
             @ApiResponse(responseCode="400", description="User not found.", content=@Content(mediaType ="text/plain"))
     })
-
     @PostMapping("/request-reset")
     public ResponseEntity<?> requestreset(@RequestBody ResetRequest resetRequest) {
         String email;
@@ -123,7 +116,6 @@ public class AuthController {
         newToken.setToken(token);
         newToken.setUser(user);
         newToken.setExpiresAt(LocalDateTime.now().plusMinutes(15));
-        newToken.setUsed(false);
 
         tokenRepository.save(newToken);
 
@@ -137,5 +129,48 @@ public class AuthController {
         emailSender.sendEmail(email,subject,body);
 
         return ResponseEntity.ok("Reset link sent successfully.");
+    }
+
+    @Operation(summary = "Verify if a password reset token is valid",tags={"Authentication"},description="Checks if the token exists and is not expired.")
+    @ApiResponses(value={
+            @ApiResponse(responseCode="200",description="Token is valid."),
+            @ApiResponse(responseCode = "400",description = "Invalid or expired token.")
+    })
+    @PostMapping("/verify-reset-token")
+    public ResponseEntity<?> verifyResetToken(@RequestBody VerifyToken verifyToken) {
+        if(tokenRepository.findByToken(verifyToken.getToken()).isEmpty()) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Token not found");
+        }
+
+        Token token=tokenRepository.findByToken(verifyToken.getToken()).get();
+
+        if(token.IsExpired()){
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Token is expired");
+        }
+
+        return ResponseEntity.status(HttpStatus.OK).body("Token is valid");
+    }
+
+    @Operation(summary="Reset the user's password",tags={"Authentication"},description="Updates the password for the user associated with the provided token.")
+    @ApiResponses(value={
+            @ApiResponse(responseCode = "200",description = "Password reset successfully."),
+            @ApiResponse(responseCode = "400",description = "Invalid token or weak password.")
+    })
+    @PostMapping("/reset-password")
+    public ResponseEntity<?> resetPassword(@RequestBody ResetPassword resetPassword){
+        if(tokenRepository.findByToken(resetPassword.getToken()).isEmpty()) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid token");
+        }
+
+        Token token=tokenRepository.findByToken(resetPassword.getToken()).get();
+
+        User user=token.getUser();
+
+        user.setPassword(resetPassword.getPassword());
+        userRepository.save(user);
+
+        tokenRepository.delete(token);
+
+        return ResponseEntity.status(HttpStatus.OK).body("Password reset successfully.");
     }
 }

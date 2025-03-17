@@ -34,10 +34,6 @@ public class Token{
         this.expiresAt = expiresAt;
     }
 
-    public void setUsed(boolean used) {
-        this.used = used;
-    }
-
     public String getToken() {
         return token;
     }
