@@ -6,6 +6,8 @@
 
 ## [Backend Proxy](https://se-backend.up.railway.app)
 
+## [Mock API Server](https://virtserver.swaggerhub.com/softwareproject-afb/Software_project/1.0.0)
+
 ## [Admin Panel](https://admin-dashboard-se-project.up.railway.app/)
 
 ## Local documentation in the documentation branch
@@ -44,13 +46,12 @@ winget install postgresql
 sudo apt install postgresql-client
 ```
 
-````
 
 ## Connect to Postgres
 
 ```bash
 psql -h <host> -u <user> -P <port> -p <database>
-````
+```
 
 enter password when prompted
 
@@ -70,11 +71,15 @@ export SPRING_DATASOURCE_USERNAME=<username>
 export SPRING_DATASOURCE_PASSWORD=<password>
 export SWAGGERHUB_TOKEN=<token>
 export JWT_SECRET=<your-very-long-secret-key-that-is-at-least-32-characters-long>
+export SPRING_MAIL_HOST=smtp.gmail.com
+export SPRING_MAIL_PORT=587
+export SPRING_MAIL_USERNAME=<mail_username>
+export SPRING_MAIL_PASSWORD=<mail_password>
 ```
 
-replace `<connection-string>`, `<username>`, `<password>` with the values from the railway backend variables
-for `<connection-string>` use SPRING_DATASOURCE_PUBLIC_URL from the backend variables
-and `<token>` with your SwaggerHub token
+replace `<connection-string>`, `<username>`, `<password>` `mail_username` `mail_password` with the values from the railway backend variables
+for `<connection-string>` use `SPRING_DATASOURCE_PUBLIC_URL` value from the backend variables
+and `<token>` with SwaggerHub token
 
 ## Run the project locally
 
