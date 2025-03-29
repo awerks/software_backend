@@ -12,9 +12,13 @@ import java.time.LocalDateTime;
 public class UserRegistration {
 
     @NotEmpty(message = "First name is required")
+    @Size(min = 2, max = 30, message = "First name must be between 2 and 30 characters")
+    @Pattern(regexp = "^[a-zA-Z]+$", message = "First name must contain only letters")
     private String firstName;
 
     @NotEmpty(message = "Last name is required")
+    @Size(min = 2, max = 30, message = "Last name must be between 2 and 30 characters")
+    @Pattern(regexp = "^[a-zA-Z]+$", message = "Last name must contain only letters")
     private String lastName;
 
     @NotEmpty(message = "Email is required")
@@ -22,6 +26,7 @@ public class UserRegistration {
     private String email;
 
     @Past(message = "Birthdate must be in the past")
+    @NotEmpty(message = "Birthdate is required")
     private LocalDateTime birthdate;
 
     @NotEmpty(message = "Username is required")
