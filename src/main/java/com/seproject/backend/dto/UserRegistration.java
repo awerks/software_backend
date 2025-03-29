@@ -26,7 +26,6 @@ public class UserRegistration {
     private String email;
 
     @Past(message = "Birthdate must be in the past")
-    @NotEmpty(message = "Birthdate is required")
     private LocalDateTime birthdate;
 
     @NotEmpty(message = "Username is required")
