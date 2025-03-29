@@ -5,25 +5,25 @@ import jakarta.persistence.*;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name="reset_confirm_tokens")
-public class Token{
+@Table(name = "reset_confirm_tokens")
+public class Token {
 
     @Id
-    @Column(name="token")
+    @Column(name = "token")
     private String token;
 
     @ManyToOne
-    @JoinColumn(name="user_id",nullable = false)
+    @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
-    @Column(name="expires_at_utc", nullable = false)
+    @Column(name = "expires_at_utc", nullable = false)
     private LocalDateTime expiresAt;
 
     @Column(nullable = false)
     private boolean used;
 
     public void setToken(String token) {
-        this.token=token;
+        this.token = token;
     }
 
     public void setUser(User user) {

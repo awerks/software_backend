@@ -1,9 +1,11 @@
 package com.seproject.backend.dto;
 
-public class ResetRequest {
-    private String username;
-    private String email;
+import jakarta.validation.constraints.NotEmpty;
+import lombok.Data;
 
-    public String getUsername() {return username;}
-    public String getEmail() {return email;}
+@Data
+public class ResetRequest {
+
+    @NotEmpty(message = "Username or Email is required")
+    private String usernameOrEmail;
 }

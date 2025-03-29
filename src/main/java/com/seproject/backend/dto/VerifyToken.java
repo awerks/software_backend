@@ -1,7 +1,11 @@
 package com.seproject.backend.dto;
 
-public class VerifyToken {
-    private String token;
+import lombok.Data;
+import jakarta.validation.constraints.NotEmpty;
 
-    public String getToken() {return token;}
+@Data
+public class VerifyToken {
+
+    @NotEmpty(message = "Token is required")
+    private String token;
 }

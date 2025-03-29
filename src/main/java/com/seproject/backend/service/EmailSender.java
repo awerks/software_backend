@@ -4,20 +4,33 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
+import org.springframework.beans.factory.annotation.Value;
 
 @Service
 public class EmailSender {
     @Autowired
     private JavaMailSender mailSender;
 
-    public void sendEmail(String to, String subject, String body) {
-        SimpleMailMessage message=new SimpleMailMessage();
+    @Value("${spring.mail.username}")
+    private String fromEmail;
 
-        message.setFrom("dashpress1000@gmail.com");
+    public void sendEmail(String to, String subject, String body) {
+        SimpleMailMessage message = new SimpleMailMessage();
+        message.setFrom(fromEmail);
         message.setTo(to);
         message.setSubject(subject);
         message.setText(body);
 
         mailSender.send(message);
+    }
+
+    public void sendResetPasswordEmail(String to, String token) {
+        String subject = "Password Reset Link";
+        String body = "Hello,\n\n" +
+                "You requested to reset your password. Click the link below to proceed:\n" +
+                "https://se-project.up.railway.app/reset-password?token=" + token + "\n\n" +
+                "If you didn't request this, please ignore this email.\n\n" +
+                "Sincerelly,\nDashpress";
+        sendEmail(to, subject, body);
     }
 }
