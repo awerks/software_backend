@@ -43,7 +43,7 @@ public class AuthInterceptor implements HandlerInterceptor {
                 }
             }
         }
-        response.setHeader("WWW-Authenticate", "Bearer realm=\"Access to the protected resource\"");
+        response.setHeader("WWW-Authenticate", "Cookie realm=\"Access to the protected resource\"");
         JsonResponseUtil.jsonResponse(response, HttpServletResponse.SC_UNAUTHORIZED, "No access token provided");
 
         return false;
