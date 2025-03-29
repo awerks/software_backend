@@ -3,7 +3,7 @@ package com.seproject.backend.dto;
 import java.time.LocalDateTime;
 
 public class UserRegistration {
-    private String name;
+    private String firstName;
     private String lastName;
     private String email;
     private LocalDateTime birthdate;
@@ -11,12 +11,12 @@ public class UserRegistration {
     private String password;
     private String role;
 
-    public String getName() {
-        return name;
+    public String getFirstName() {
+        return firstName;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setFirstName(String name) {
+        this.firstName = name;
     }
 
     public String getLastName() {
