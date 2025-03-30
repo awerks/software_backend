@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.Data;
 
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 
 @Entity
 @Table(name = "reset_confirm_tokens")
@@ -25,7 +26,7 @@ public class Token {
     private boolean used;
 
     public boolean isExpired() {
-        return LocalDateTime.now().isAfter(expiresAt);
+        return LocalDateTime.now(ZoneId.of("UTC")).isAfter(expiresAt);
     }
 
 }

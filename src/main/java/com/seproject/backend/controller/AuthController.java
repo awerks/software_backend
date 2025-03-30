@@ -22,6 +22,7 @@ import org.springframework.web.bind.annotation.*;
 import com.seproject.backend.service.EmailSender;
 
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.Optional;
 
 import jakarta.servlet.http.Cookie;
@@ -158,7 +159,7 @@ public class AuthController {
 
         newToken.setToken(token);
         newToken.setUser(user);
-        newToken.setExpiresAt(LocalDateTime.now().plusMinutes(60));
+        newToken.setExpiresAt(LocalDateTime.now(ZoneId.of("UTC")).plusMinutes(60));
 
         tokenRepository.save(newToken);
 
@@ -267,7 +268,7 @@ public class AuthController {
 
         newToken.setToken(token);
         newToken.setUser(user);
-        newToken.setExpiresAt(LocalDateTime.now().plusMinutes(60));
+        newToken.setExpiresAt(LocalDateTime.now(ZoneId.of("UTC")).plusMinutes(60));
 
         tokenRepository.save(newToken);
 
