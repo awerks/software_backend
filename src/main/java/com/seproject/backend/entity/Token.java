@@ -42,7 +42,7 @@ public class Token {
         return user;
     }
 
-    public boolean IsExpired() {
+    public boolean isExpired() {
         return LocalDateTime.now().isAfter(expiresAt);
     }
 

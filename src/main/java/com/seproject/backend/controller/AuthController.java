@@ -152,7 +152,7 @@ public class AuthController {
 
         newToken.setToken(token);
         newToken.setUser(user);
-        newToken.setExpiresAt(LocalDateTime.now().plusMinutes(30));
+        newToken.setExpiresAt(LocalDateTime.now().plusMinutes(60));
 
         tokenRepository.save(newToken);
 
@@ -163,47 +163,42 @@ public class AuthController {
 
     @Operation(summary = "Verify if a password reset token is valid", tags = {
             "Authentication" }, description = "Checks if the token exists and is not expired.")
-    @ApiResponses(value = { @ApiResponse(responseCode = "200", description = "Token is valid."),
-            @ApiResponse(responseCode = "400", description = "Invalid or expired token.", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class))) })
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Token is valid."),
+            @ApiResponse(responseCode = "400", description = "Invalid token.", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class))),
+            @ApiResponse(responseCode = "403", description = "Token expired or used", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class)))
+    })
     @PostMapping("/verify-reset-token")
     public ResponseEntity<?> verifyResetToken(@Valid @RequestBody VerifyToken verifyToken) {
-        if (tokenRepository.findByToken(verifyToken.getToken()).isEmpty()) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse("Invalid token"));
+        try {
+            validateToken(verifyToken.getToken());
+            return ResponseEntity.status(HttpStatus.OK).body(new SuccessResponse("Token is valid"));
+        } catch (Exception e) {
+            HttpStatus status = "Invalid token".equals(e.getMessage()) ? HttpStatus.BAD_REQUEST : HttpStatus.FORBIDDEN;
+            return ResponseEntity.status(status).body(new ErrorResponse(e.getMessage()));
         }
-
-        Token token = tokenRepository.findByToken(verifyToken.getToken()).get();
-
-        if (token.IsExpired()) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse("Token expired"));
-        }
-
-        return ResponseEntity.status(HttpStatus.OK).body(new SuccessResponse("Token is valid"));
     }
 
     @Operation(summary = "Reset the user's password", tags = {
             "Authentication" }, description = "Updates the password for the user associated with the provided token.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Password reset successfully.", content = @Content(mediaType = "application/json", schema = @Schema(implementation = SuccessResponse.class))),
-            @ApiResponse(responseCode = "400", description = "Invalid token or weak password. (Password must be at least 8 characters)", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class)))
+            @ApiResponse(responseCode = "400", description = "Invalid token or weak password. (Password must be at least 8 characters)", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class))),
+            @ApiResponse(responseCode = "403", description = "Token expired or used", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class)))
     })
     @PostMapping("/reset-password")
     public ResponseEntity<?> resetPassword(@Valid @RequestBody ResetPassword resetPassword) {
-        if (tokenRepository.findByToken(resetPassword.getToken()).isEmpty()
-                || resetPassword.getPassword().length() < 8) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                    .body(new ErrorResponse("Invalid token or weak password (less than 8 characters)"));
+        try {
+            Token token = validateToken(resetPassword.getToken());
+            User user = token.getUser();
+            user.setPassword(resetPassword.getPassword());
+            userRepository.save(user);
+            tokenRepository.delete(token);
+            return ResponseEntity.status(HttpStatus.OK).body(new SuccessResponse("Password reset successfully"));
+        } catch (Exception e) {
+            HttpStatus status = "Invalid token".equals(e.getMessage()) ? HttpStatus.BAD_REQUEST : HttpStatus.FORBIDDEN;
+            return ResponseEntity.status(status).body(new ErrorResponse(e.getMessage()));
         }
-
-        Token token = tokenRepository.findByToken(resetPassword.getToken()).get();
-
-        User user = token.getUser();
-
-        user.setPassword(resetPassword.getPassword());
-        userRepository.save(user);
-
-        tokenRepository.delete(token);
-
-        return ResponseEntity.status(HttpStatus.OK).body(new SuccessResponse("Password reset successfully"));
     }
 
     @Operation(summary = "Get a protected resource", tags = {
@@ -223,5 +218,17 @@ public class AuthController {
         System.out.println("Role: " + role);
 
         return ResponseEntity.ok(new SuccessResponse("Access granted to protected resource."));
+    }
+
+    private Token validateToken(String tokenStr) throws Exception {
+        Optional<Token> tokenOptional = tokenRepository.findByToken(tokenStr);
+        if (tokenOptional.isEmpty()) {
+            throw new Exception("Invalid token");
+        }
+        Token token = tokenOptional.get();
+        if (token.isExpired() || token.getUsed()) {
+            throw new Exception("Token expired or used");
+        }
+        return token;
     }
 }

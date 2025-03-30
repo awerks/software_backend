@@ -22,6 +22,7 @@ public class User {
     @Column(length = 255)
     private String email;
 
+    // ISO-8601
     private LocalDateTime birthdate;
 
     @Column(nullable = false, length = 100, unique = true)

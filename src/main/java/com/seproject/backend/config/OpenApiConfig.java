@@ -27,7 +27,8 @@ public class OpenApiConfig {
         return new OpenAPI()
                 .info(info)
                 .servers(java.util.List.of(
-                        new io.swagger.v3.oas.models.servers.Server().url("https://se-backend.up.railway.app/"),
-                        new io.swagger.v3.oas.models.servers.Server().url("https://localhost:8080")));
+                        new io.swagger.v3.oas.models.servers.Server()
+                                .url("http://localhost:8080"),
+                        new io.swagger.v3.oas.models.servers.Server().url("https://se-backend.up.railway.app/")));
     }
 }
