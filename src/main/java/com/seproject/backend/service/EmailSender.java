@@ -30,7 +30,17 @@ public class EmailSender {
                 "You requested to reset your password. Click the link below to proceed:\n" +
                 "https://se-project.up.railway.app/reset-password?token=" + token + "\n\n" +
                 "If you didn't request this, please ignore this email.\n\n" +
-                "Sincerelly,\nDashpress";
+                "Sincerely,\nDashpress";
+        sendEmail(to, subject, body);
+    }
+
+    public void sendVerificationEmail(String to, String token) {
+        String subject = "Email Verification";
+        String body = "Hello,\n\n" +
+                "Please verify your email address by clicking the link below:\n" +
+                "https://se-project.up.railway.app/verify-email?token=" + token + "\n\n" +
+                "If you didn't request this, please ignore this email.\n\n" +
+                "Sincerely,\nDashpress";
         sendEmail(to, subject, body);
     }
 }

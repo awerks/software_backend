@@ -1,6 +1,5 @@
 package com.seproject.backend.interceptors;
 
-import com.seproject.backend.security.JwtUtil;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -11,6 +10,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
 
 import com.seproject.backend.util.JsonResponseUtil;
+import com.seproject.backend.util.JwtUtil;
 import com.seproject.backend.util.SessionUtil;
 
 @Component

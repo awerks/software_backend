@@ -6,7 +6,6 @@ import com.seproject.backend.entity.User;
 
 import com.seproject.backend.repository.TokenRepository;
 import com.seproject.backend.repository.UserRepository;
-import com.seproject.backend.security.JwtUtil;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -30,6 +29,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 
+import com.seproject.backend.util.JwtUtil;
 import com.seproject.backend.util.SessionUtil;
 
 import com.seproject.backend.annotations.RoleRequired;
@@ -43,10 +43,9 @@ public class AuthController {
     @Autowired
     private UserRepository userRepository;
     @Autowired
-    private JwtUtil jwtUtil;
-    @Autowired
     private TokenRepository tokenRepository;
-
+    @Autowired
+    private JwtUtil jwtUtil;
     @Autowired
     private EmailSender emailSender;
 
@@ -130,6 +129,7 @@ public class AuthController {
         newUser.setUsername(registerRequest.getUsername());
         newUser.setPassword(registerRequest.getPassword());
         newUser.setRole(registerRequest.getRole());
+        newUser.setVerified(false);
 
         userRepository.save(newUser);
 
@@ -152,7 +152,7 @@ public class AuthController {
         User user = userRepository.findByUsernameOrEmail(resetRequest.getUsernameOrEmail()).get();
         String email = user.getEmail();
 
-        String token = jwtUtil.generateResetToken(email);
+        String token = jwtUtil.generateResetVerificationToken(email);
 
         Token newToken = new Token();
 
@@ -174,8 +174,8 @@ public class AuthController {
             @ApiResponse(responseCode = "400", description = "Invalid token.", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class))),
             @ApiResponse(responseCode = "403", description = "Token expired or used", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class)))
     })
-    @PostMapping("/verify-reset-token")
-    public ResponseEntity<?> verifyResetToken(@Valid @RequestBody VerifyToken verifyToken) {
+    @PostMapping("/verify-token")
+    public ResponseEntity<?> verifyToken(@Valid @RequestBody VerifyToken verifyToken) {
         try {
             validateToken(verifyToken.getToken());
             return ResponseEntity.status(HttpStatus.OK).body(new SuccessResponse("Token is valid"));
@@ -232,9 +232,71 @@ public class AuthController {
             throw new Exception("Invalid token");
         }
         Token token = tokenOptional.get();
-        if (token.isExpired() || token.getUsed()) {
+        if (token.isExpired() || token.isUsed()) {
             throw new Exception("Token expired or used");
         }
         return token;
+    }
+
+    @Operation(summary = "Request email verification link", tags = {
+            "Authentication" }, description = "Sends an email with verification link to user.")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Email sent successfully", content = @Content(mediaType = "application/json", schema = @Schema(implementation = SuccessResponse.class))),
+            @ApiResponse(responseCode = "400", description = "Sending failed", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class)))
+    })
+    @PostMapping("/send-verification-link")
+    public ResponseEntity<?> requestVerificationLink(@Valid @RequestBody VerificationRequest verificationRequest) {
+
+        String email = verificationRequest.getUsernameOrEmail();
+        Optional<User> userOptional = userRepository.findByUsernameOrEmail(email);
+        if (userOptional.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse("User not found."));
+        }
+        User user = userOptional.get();
+        if (user.isVerified()) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Email is already verified");
+        }
+
+        String token = jwtUtil.generateResetVerificationToken(email);
+
+        Token newToken = new Token();
+
+        newToken.setToken(token);
+        newToken.setUser(user);
+        newToken.setExpiresAt(LocalDateTime.now().plusMinutes(60));
+
+        tokenRepository.save(newToken);
+
+        emailSender.sendVerificationEmail(email, token);
+
+        return ResponseEntity.ok(new SuccessResponse("Email verification link sent successfully."));
+    }
+
+    @Operation(summary = "Verify user's email", tags = {
+            "Authentication" }, description = "Verifies user's email adress.")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "User verified successfully.", content = @Content(mediaType = "application/json", schema = @Schema(implementation = SuccessResponse.class))),
+            @ApiResponse(responseCode = "400", description = "Token not found, expired or used", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class))),
+    })
+    @PostMapping("/verify-email")
+    public ResponseEntity<?> verifyEmail(@RequestBody VerifyEmail email) {
+
+        Optional<Token> tokenOptional = tokenRepository.findByToken(email.getToken());
+        if (tokenOptional.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse("Invalid token"));
+        }
+        Token token = tokenOptional.get();
+        if (token.isExpired() || token.isUsed()) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse("Token expired or used"));
+        }
+
+        User user = token.getUser();
+
+        user.setVerified(true);
+        userRepository.save(user);
+
+        tokenRepository.delete(token);
+
+        return ResponseEntity.status(HttpStatus.OK).body(new SuccessResponse("User verified successfully."));
     }
 }

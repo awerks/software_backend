@@ -2,9 +2,13 @@ package com.seproject.backend.entity;
 
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Entity
 @Table(name = "users")
+@Data
+@NoArgsConstructor
 public class User {
 
     @Id
@@ -13,88 +17,27 @@ public class User {
     private Integer userId;
 
     @Column(name = "first_name", nullable = false, length = 100)
-
     private String firstName;
 
     @Column(name = "last_name", length = 100)
     private String lastName;
 
-    @Column(length = 255)
+    @Column(name = "email", length = 255, nullable = false)
     private String email;
 
     // ISO-8601
+    @Column(name = "birthdate")
     private LocalDateTime birthdate;
 
-    @Column(nullable = false, length = 100, unique = true)
+    @Column(name = "username", nullable = false, length = 100)
     private String username;
 
-    @Column(nullable = false, length = 100)
+    @Column(name = "password", nullable = false, length = 100)
     private String password;
 
-    @Column(nullable = false, length = 50)
+    @Column(name = "role", nullable = false, length = 50)
     private String role;
 
-    public Integer getUserId() {
-        return userId;
-    }
-
-    public void setUserId(Integer userId) {
-        this.userId = userId;
-    }
-
-    public String getFirstName() {
-        return firstName;
-    }
-
-    public void setFirstName(String name) {
-        this.firstName = name;
-    }
-
-    public String getLastName() {
-        return lastName;
-    }
-
-    public void setLastName(String lastName) {
-        this.lastName = lastName;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public LocalDateTime getBirthdate() {
-        return birthdate;
-    }
-
-    public void setBirthdate(LocalDateTime birthdate) {
-        this.birthdate = birthdate;
-    }
-
-    public String getUsername() {
-        return username;
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-    public String getRole() {
-        return role;
-    }
-
-    public void setRole(String role) {
-        this.role = role;
-    }
+    @Column(name = "verified", nullable = false)
+    private boolean verified;
 }

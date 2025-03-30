@@ -1,5 +1,5 @@
 
-package com.seproject.backend.security;
+package com.seproject.backend.util;
 
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
@@ -30,7 +30,7 @@ public class JwtUtil {
                 .compact();
     }
 
-    public String generateResetToken(String email) {
+    public String generateResetVerificationToken(String email) {
         SecretKey key = Keys.hmacShaKeyFor(secret.getBytes(StandardCharsets.UTF_8));
         return Jwts.builder()
                 .setSubject(email)
