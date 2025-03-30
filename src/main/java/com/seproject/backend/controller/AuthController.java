@@ -214,6 +214,7 @@ public class AuthController {
             @ApiResponse(responseCode = "401", description = "Unauthorized: user not logged in.", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class))),
             @ApiResponse(responseCode = "403", description = "Access denied: insufficient permissions.", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class)))
     })
+
     @GetMapping("/protected")
     @RoleRequired("user")
     public ResponseEntity<?> getProtectedResource(@NonNull HttpServletRequest request) {
@@ -242,20 +243,23 @@ public class AuthController {
             "Authentication" }, description = "Sends an email with verification link to user.")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "Email sent successfully", content = @Content(mediaType = "application/json", schema = @Schema(implementation = SuccessResponse.class))),
-            @ApiResponse(responseCode = "400", description = "Sending failed", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class)))
+            @ApiResponse(responseCode = "400", description = "User not found", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class))),
+            @ApiResponse(responseCode = "409", description = "Email already verified", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class)))
     })
     @PostMapping("/send-verification-link")
     public ResponseEntity<?> requestVerificationLink(@Valid @RequestBody VerificationRequest verificationRequest) {
 
-        String email = verificationRequest.getUsernameOrEmail();
-        Optional<User> userOptional = userRepository.findByUsernameOrEmail(email);
+        String usernameOrEmail = verificationRequest.getUsernameOrEmail();
+        Optional<User> userOptional = userRepository.findByUsernameOrEmail(usernameOrEmail);
         if (userOptional.isEmpty()) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse("User not found."));
         }
         User user = userOptional.get();
         if (user.isVerified()) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Email is already verified");
+            return ResponseEntity.status(HttpStatus.CONFLICT)
+                    .body(new ErrorResponse("Email is already verified"));
         }
+        String email = user.getEmail();
 
         String token = jwtUtil.generateResetVerificationToken(email);
 
@@ -279,7 +283,7 @@ public class AuthController {
             @ApiResponse(responseCode = "400", description = "Token not found, expired or used", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class))),
     })
     @PostMapping("/verify-email")
-    public ResponseEntity<?> verifyEmail(@RequestBody VerifyEmail email) {
+    public ResponseEntity<?> verifyEmail(@Valid @RequestBody VerifyEmail email) {
 
         Optional<Token> tokenOptional = tokenRepository.findByToken(email.getToken());
         if (tokenOptional.isEmpty()) {
