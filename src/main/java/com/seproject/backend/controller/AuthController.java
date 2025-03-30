@@ -14,6 +14,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 
+import jakarta.validation.constraints.Email;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -74,6 +75,7 @@ public class AuthController {
         newUser.setUsername(registerRequest.getUsername());
         newUser.setPassword(registerRequest.getPassword());
         newUser.setRole(registerRequest.getRole());
+        newUser.setVerfied(false);
 
         User savedUser = userRepository.save(newUser);
 
@@ -109,7 +111,7 @@ public class AuthController {
             email = user.getEmail();
         }
 
-        String token= jwtUtil.generateResetToken(email);
+        String token= jwtUtil.generateToken(email);
 
         Token newToken = new Token();
 
@@ -136,8 +138,8 @@ public class AuthController {
             @ApiResponse(responseCode="200",description="Token is valid."),
             @ApiResponse(responseCode = "400",description = "Invalid or expired token.")
     })
-    @PostMapping("/verify-reset-token")
-    public ResponseEntity<?> verifyResetToken(@RequestBody VerifyToken verifyToken) {
+    @PostMapping("/verify-token")
+    public ResponseEntity<?> verifyToken(@RequestBody VerifyToken verifyToken) {
         if(tokenRepository.findByToken(verifyToken.getToken()).isEmpty()) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Token not found");
         }
@@ -172,5 +174,67 @@ public class AuthController {
         tokenRepository.delete(token);
 
         return ResponseEntity.status(HttpStatus.OK).body("Password reset successfully.");
+    }
+
+    @Operation(summary = "Request email verification link", tags={"Authentication"},description="Sends an email with verification link to user.")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200",description="Email sent successfully"),
+            @ApiResponse(responseCode = "400",description = "Sending failed")
+    })
+    @PostMapping("/send-verification-link")
+    public ResponseEntity<?> requestVerificationLink(@CookieValue(name="jwt",required = true) String t,
+                                                     @RequestBody VerificationRequest verificationRequest){
+
+        String email=verificationRequest.getEmail();
+        User user=userRepository.findByEmail(email).get();
+
+        if(user.isVerified())
+        {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Email is already verified");
+        }
+
+        String token= jwtUtil.generateToken(email);
+
+        Token newToken = new Token();
+
+        newToken.setToken(token);
+        newToken.setUser(user);
+        newToken.setExpiresAt(LocalDateTime.now().plusMinutes(15));
+
+        tokenRepository.save(newToken);
+
+        String subject="Email Verification Link";
+        String body="Hello,\n\n" +
+                "You requested to verify your email. Click the link below to proceed:\n" +
+                "https://se-project.up.railway.app/verify-email?token="+token+"\n\n" +
+                "If you didn't request this, please ignore this email.\n\n" +
+                "Sincerelly,\nDashpress";
+
+        emailSender.sendEmail(email,subject,body);
+
+        return ResponseEntity.ok("Email verification link sent successfully.");
+    }
+
+    @Operation(summary = "Verify user's email",tags={"Authentication"},description="Verifies user's email adress.")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200",description="User verified successfully."),
+            @ApiResponse(responseCode = "400",description = "User verification failed.")
+    })
+    @PostMapping("/verify-email")
+    public ResponseEntity<?> verifyEmail(@RequestBody VerifyEmail email){
+
+        if(tokenRepository.findByToken(email.getToken()).isEmpty()) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid token");
+        }
+        Token token=tokenRepository.findByToken(email.getToken()).get();
+
+        User user=token.getUser();
+
+        user.setVerfied(true);
+        userRepository.save(user);
+
+        tokenRepository.delete(token);
+
+        return ResponseEntity.status(HttpStatus.OK).body("User verified successfully.");
     }
 }

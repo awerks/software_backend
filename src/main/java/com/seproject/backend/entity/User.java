@@ -13,7 +13,7 @@ public class User {
     @Column(name = "user_id")
     private Integer userId;
 
-    @Column(nullable = false, length = 100)
+    @Column(name="first_name",nullable = false, length = 100)
     private String name;
 
     @Column(name = "last_name", length = 100)
@@ -33,8 +33,8 @@ public class User {
     @Column(nullable = false, length = 50)
     private String role;
 
-    @OneToMany(mappedBy = "users", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Token> tokens;
+    @Column(nullable = false)
+    private boolean verified;
 
     public Integer getUserId() {
         return userId;
@@ -99,4 +99,8 @@ public class User {
     public void setRole(String role) {
         this.role = role;
     }
+
+    public void setVerfied(boolean verified) {this.verified=verified;}
+
+    public boolean isVerified() {return verified;}
 }

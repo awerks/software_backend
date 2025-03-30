@@ -33,7 +33,7 @@ public class JwtUtil {
                 .compact();
     }
 
-    public String generateResetToken(String email){
+    public String generateToken(String email){
         SecretKey key = Keys.hmacShaKeyFor(secret.getBytes(StandardCharsets.UTF_8));
         return Jwts.builder()
                 .setSubject(email)
