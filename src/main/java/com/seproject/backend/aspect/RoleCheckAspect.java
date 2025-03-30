@@ -34,7 +34,9 @@ public class RoleCheckAspect {
             throw new IllegalArgumentException("Invalid role required");
         }
         if (userRole == null || !roles.containsKey(userRole) || roles.get(userRole) < roles.get(requiredRole)) {
-            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Access denied: insufficient permissions");
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN,
+                    "Access denied: insufficient permissions; required role: "
+                            + requiredRole + ", user role: " + userRole);
         }
     }
 }
