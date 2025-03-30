@@ -15,6 +15,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.lang.NonNull;
@@ -37,6 +38,8 @@ import com.seproject.backend.annotations.RoleRequired;
 @RequestMapping("/api/auth")
 public class AuthController {
 
+    @Value("${cookie.domain}")
+    private String cookieDomain;
     @Autowired
     private UserRepository userRepository;
     @Autowired
@@ -68,6 +71,9 @@ public class AuthController {
                     jwtTokenCookie.setHttpOnly(true);
                     jwtTokenCookie.setPath("/");
                     jwtTokenCookie.setMaxAge(86400);
+                    if (!cookieDomain.isEmpty()) {
+                        jwtTokenCookie.setDomain(cookieDomain);
+                    }
                     jwtTokenCookie.setSecure(true);
                     response.addCookie(jwtTokenCookie);
 
