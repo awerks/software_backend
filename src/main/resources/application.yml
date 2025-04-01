@@ -1,0 +1,37 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://maglev.proxy.rlwy.net:44972/railway
+    username: postgres
+    password: PzvtlSLIhZUZdSNzJsPvfxzlYqCPzbqu
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: dashpress1000@gmail.com
+    password: hifkcdnflwecfpvj
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+
+jwt:
+  secret: b8iuBAt4rXDi4MI863UWRFKR0q4KBT7I6jU1maMuyz8G
+
+server:
+  port: 8080
+
+logging:
+  level:
+    org.springframework: INFO
+    com.seproject.backend: DEBUG
+
+cookie:
+  domain:
