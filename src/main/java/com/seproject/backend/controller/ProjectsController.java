@@ -38,6 +38,9 @@ public class ProjectsController {
         if (!projectRepository.findByProjectId(projectId).isPresent()) {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("This project does not exists");
         }
+        if (teamspaceRepository.findByName(teamspaceCreationRequest.getName()).isPresent()){
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("This teamspace name is already been used");
+        }
         Teamspace newTeamspace = new Teamspace();
         newTeamspace.setName(teamspaceCreationRequest.getName());
         newTeamspace.setProjectId(projectId);

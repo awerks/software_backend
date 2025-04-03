@@ -6,8 +6,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import com.seproject.backend.entity.Project;
 
-public interface ProjectRepository extends JpaRepository<Project, Integer>{
+public interface ProjectRepository extends JpaRepository<Project, Integer> {
     Optional<Project> findByProjectId(Integer projectId);
 }
-
- 
