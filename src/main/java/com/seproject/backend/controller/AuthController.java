@@ -39,7 +39,7 @@ import com.seproject.backend.annotations.RoleRequired;
 @RequestMapping("/api/auth")
 public class AuthController {
 
-    @Value("${cookie.domain:localhost}")
+    @Value("${cookie.domain}")
     private String cookieDomain;
     @Autowired
     private UserRepository userRepository;

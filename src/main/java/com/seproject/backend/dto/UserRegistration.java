@@ -31,6 +31,7 @@ public class UserRegistration {
     @NotEmpty(message = "Username is required")
     @Size(min = 3, max = 20, message = "Username must be between 3 and 20 characters")
     @Pattern(regexp = "^\\S+$", message = "Username must not contain spaces")
+
     private String username;
 
     @NotEmpty(message = "Password is required")

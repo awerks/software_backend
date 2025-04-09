@@ -5,34 +5,23 @@ import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
 import org.springframework.beans.factory.annotation.Value;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 @Service
 public class EmailSender {
-    private static final Logger logger = LoggerFactory.getLogger(EmailSender.class);
-
-    @Autowired(required = false)
+    @Autowired
     private JavaMailSender mailSender;
 
-    @Value("${spring.mail.username:dummy@example.com}")
+    @Value("${spring.mail.username}")
     private String fromEmail;
 
     public void sendEmail(String to, String subject, String body) {
-        // Just log the email for development instead of sending it
-        logger.info("Sending email to: {}", to);
-        logger.info("Subject: {}", subject);
-        logger.info("Body: {}", body);
-        
-        // Only use the actual mail sender if it's configured
-        if (mailSender != null) {
-            SimpleMailMessage message = new SimpleMailMessage();
-            message.setFrom(fromEmail);
-            message.setTo(to);
-            message.setSubject(subject);
-            message.setText(body);
-            mailSender.send(message);
-        }
+        SimpleMailMessage message = new SimpleMailMessage();
+        message.setFrom(fromEmail);
+        message.setTo(to);
+        message.setSubject(subject);
+        message.setText(body);
+
+        mailSender.send(message);
     }
 
     public void sendResetPasswordEmail(String to, String token) {

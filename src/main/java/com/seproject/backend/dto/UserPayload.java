@@ -7,7 +7,7 @@ import lombok.AllArgsConstructor;
 @Data
 @AllArgsConstructor
 public class UserPayload {
-    private Long user_id;
+    private int user_id;
     private String firstName;
     private String lastName;
     private String email;

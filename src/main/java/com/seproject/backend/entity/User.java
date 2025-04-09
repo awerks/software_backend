@@ -5,34 +5,21 @@ import java.time.LocalDateTime;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-/**
- * User Entity
- * 
- * This entity represents a user in the system.
- * Users can be members of teamspaces and can send chat messages.
- * 
- * Key features:
- * - Unique user ID
- * - Basic user information (name, email, etc.)
- * - Authentication details
- * - Role-based access control
- * - One-to-Many relationship with ChatMessages
- */
 @Entity
 @Table(name = "users")
 @Data
 @NoArgsConstructor
 public class User {
-    
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "user_id")
-    private Long userId;
+    private Integer userId;
 
     @Column(name = "first_name", nullable = false, length = 100)
     private String firstName;
 
-    @Column(name = "last_name")
+    @Column(name = "last_name", length = 100)
     private String lastName;
 
     @Column(name = "email", length = 255, nullable = false)
