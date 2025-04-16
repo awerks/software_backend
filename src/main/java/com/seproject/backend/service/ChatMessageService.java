@@ -45,7 +45,7 @@ public class ChatMessageService {
      * @return The created message as DTO
      */
     @Transactional
-    public ChatMessageDTO createMessage(ChatMessageDTO messageDTO, Long senderId) {
+    public ChatMessageDTO createMessage(ChatMessageDTO messageDTO, Integer senderId) {
         Teamspace teamspace = teamspaceRepository.findById(messageDTO.getTeamspaceId())
             .orElseThrow(() -> new RuntimeException("Teamspace not found"));
         
@@ -68,7 +68,7 @@ public class ChatMessageService {
      */
     @Transactional(readOnly = true)
     public List<ChatMessageDTO> getMessagesByTeamspace(Long teamspaceId) {
-        return chatMessageRepository.findByTeamspace_TeamspaceIdOrderByTimestampDesc(teamspaceId)
+        return chatMessageRepository.findByTeamspace_IdOrderByTimestampDesc(teamspaceId)
             .stream()
             .map(this::convertToDTO)
             .collect(Collectors.toList());

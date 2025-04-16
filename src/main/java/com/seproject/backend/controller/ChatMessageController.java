@@ -37,7 +37,7 @@ public class ChatMessageController {
     public ResponseEntity<ChatMessageDTO> createMessage(
             @PathVariable Long teamspaceId,
             @RequestBody ChatMessageDTO messageDTO,
-            @RequestHeader("X-User-ID") Long senderId) {
+            @RequestHeader("X-User-ID") Integer senderId) {
         
         messageDTO.setTeamspaceId(teamspaceId);
         ChatMessageDTO createdMessage = chatMessageService.createMessage(messageDTO, senderId);
