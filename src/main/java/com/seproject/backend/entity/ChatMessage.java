@@ -2,6 +2,7 @@ package com.seproject.backend.entity;
 
 import jakarta.persistence.*;
 import lombok.Data;
+import com.seproject.backend.model.Teamspace;
 import java.time.LocalDateTime;
 
 /**

@@ -19,6 +19,13 @@ target/
 *.log
 *.tmp
 *.json
+
+# Application Properties
+src/main/resources/application.properties
+src/main/resources/application.yml
+src/main/resources/application-*.properties
+src/main/resources/application-*.yml
+
 ### IntelliJ IDEA ###
 .idea
 *.iws

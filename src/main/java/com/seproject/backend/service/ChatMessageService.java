@@ -3,7 +3,7 @@ package com.seproject.backend.service;
 import com.seproject.backend.dto.ChatMessageDTO;
 import com.seproject.backend.dto.UserDTO;
 import com.seproject.backend.entity.ChatMessage;
-import com.seproject.backend.entity.Teamspace;
+import com.seproject.backend.model.Teamspace;
 import com.seproject.backend.entity.User;
 import com.seproject.backend.repository.ChatMessageRepository;
 import com.seproject.backend.repository.TeamspaceRepository;
@@ -84,7 +84,7 @@ public class ChatMessageService {
         dto.setMessageId(message.getMessageId());
         dto.setMessage(message.getMessage());
         dto.setTimestamp(message.getTimestamp());
-        dto.setTeamspaceId(message.getTeamspace().getTeamspaceId());
+        dto.setTeamspaceId(message.getTeamspace().getId());
         
         // Convert sender to UserDTO
         User sender = message.getSender();
@@ -94,7 +94,7 @@ public class ChatMessageService {
         senderDTO.setLastName(sender.getLastName());
         senderDTO.setEmail(sender.getEmail());
         senderDTO.setUsername(sender.getUsername());
-        senderDTO.setBirthdate(sender.getBirthdate() != null ? sender.getBirthdate().toLocalDate() : null);
+        senderDTO.setBirthdate(sender.getBirthdate());
         senderDTO.setRole(sender.getRole());
         senderDTO.setVerified(sender.isVerified());
         dto.setSender(senderDTO);

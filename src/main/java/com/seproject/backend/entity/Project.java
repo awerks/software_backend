@@ -2,6 +2,7 @@ package com.seproject.backend.entity;
 
 import jakarta.persistence.*;
 import lombok.Data;
+import com.seproject.backend.model.Teamspace;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -26,7 +27,7 @@ public class Project {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "project_id")
-    private Long projectId;
+    private Long id;
 
     @Column(nullable = false)
     private String name;

@@ -24,5 +24,5 @@ public interface ChatMessageRepository extends JpaRepository<ChatMessage, Long> 
      * @param teamspaceId The ID of the teamspace
      * @return List of chat messages
      */
-    List<ChatMessage> findByTeamspace_TeamspaceIdOrderByTimestampDesc(Long teamspaceId);
+    List<ChatMessage> findByTeamspace_IdOrderByTimestampDesc(Long teamspaceId);
 } 
