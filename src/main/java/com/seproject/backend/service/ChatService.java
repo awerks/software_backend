@@ -5,8 +5,12 @@ import com.seproject.backend.entity.ChatMessage;
 import com.seproject.backend.repository.ChatMessageRepository;
 import com.seproject.backend.exception.UnauthorizedException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 
 /*
  * Service layer for chat-related operations
@@ -39,6 +43,12 @@ public class ChatService {
 
         // Convert to DTO for response
         return converToDTO(savedMessage);
+    }
+
+    public Page<ChatMessageDTO> getMessages(Integer teamspaceId, int page, int size){
+        Pageable pageable = PageRequest.of(page, size, Sort.by("timestamp").descending());
+        Page<ChatMessage> messages = chatMessageRepository.findByTeamspaceId(teamspaceId, pageable);
+        return messages.map(this::converToDTO);
     }
 
     // convert a ChatMessage entity to the ChatMessageDTO
