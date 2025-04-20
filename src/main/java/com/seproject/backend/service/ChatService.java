@@ -3,7 +3,7 @@ package com.seproject.backend.service;
 import com.seproject.backend.dto.ChatMessageDTO;
 import com.seproject.backend.entity.ChatMessage;
 import com.seproject.backend.repository.ChatMessageRepository;
-import com.seproject.backend.exception.UnauthorizedException;
+import com.seproject.backend.exceptions.UnauthorizedException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;

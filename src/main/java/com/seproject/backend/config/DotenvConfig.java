@@ -6,17 +6,7 @@ import jakarta.annotation.PostConstruct;
 import java.lang.reflect.Field;
 import java.util.Map;
 
-/**
- * DotenvConfig
- * 
- * This configuration class loads environment variables from the .env file
- * and makes them available to the Spring application context.
- * 
- * Key features:
- * - Loads variables from .env file
- * - Sets system environment variables
- * - Runs before Spring context initialization
- */
+
 @Configuration
 public class DotenvConfig {
 

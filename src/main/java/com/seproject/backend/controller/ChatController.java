@@ -1,7 +1,7 @@
 package com.seproject.backend.controller;
 
 import com.seproject.backend.dto.ChatMessageDTO;
-import com.seproject.backend.exception.UnauthorizedException;
+import com.seproject.backend.exceptions.UnauthorizedException;
 import com.seproject.backend.service.ChatService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
