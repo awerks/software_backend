@@ -19,7 +19,6 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.RequestPostProcessor;
 import jakarta.servlet.http.Cookie;
-
 import java.util.Arrays;
 
 import static org.mockito.ArgumentMatchers.any;
@@ -137,7 +136,7 @@ public class ChatControllerTest {
                 .cookie(jwtCookie))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$.content[0].message").value(testMessage.getMessage()));
+                .andExpect(jsonPath("$._embedded.chatMessageDTOList[0].message").value(testMessage.getMessage()));
     }
 
     /**

@@ -12,6 +12,9 @@ import org.springframework.data.domain.Page;
 import com.seproject.backend.service.TeamspaceService;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpStatus;
+import org.springframework.data.web.PagedResourcesAssembler;
+import org.springframework.hateoas.PagedModel;
+import org.springframework.hateoas.EntityModel;
 
 /*
  * REST Controller for chat-related endpoints
@@ -25,6 +28,8 @@ public class ChatController {
     private ChatService chatService;
     @Autowired
     private TeamspaceService teamspaceService;
+    @Autowired
+    private PagedResourcesAssembler<ChatMessageDTO> pagedResourcesAssembler;
     
     @PostMapping
     public ResponseEntity<ChatMessageDTO> createMessage(
@@ -48,7 +53,7 @@ public class ChatController {
     }
 
     @GetMapping
-    public ResponseEntity<Page<ChatMessageDTO>> getMessages(
+    public ResponseEntity<PagedModel<EntityModel<ChatMessageDTO>>> getMessages(
         @PathVariable Integer teamspaceId,
         HttpServletRequest request,
         @RequestParam(defaultValue = "0") int page,
@@ -65,7 +70,7 @@ public class ChatController {
         Page<ChatMessageDTO> messages = chatService.getMessages(teamspaceId, page, size);
         return ResponseEntity.ok()
             .contentType(MediaType.APPLICATION_JSON)
-            .body(messages);
+            .body(pagedResourcesAssembler.toModel(messages));
     }
 
     @ExceptionHandler(UnauthorizedException.class)

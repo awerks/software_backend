@@ -6,10 +6,18 @@ import org.springframework.lang.NonNull;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+import org.springframework.data.web.config.EnableSpringDataWebSupport;
+import org.springframework.data.web.PageableHandlerMethodArgumentResolver;
+import org.springframework.web.method.support.HandlerMethodArgumentResolver;
+import java.util.List;
 
 import com.seproject.backend.interceptors.AuthInterceptor;
 
+/**
+ * Web configuration class to handle proper page serialization and other web-related configurations
+ */
 @Configuration
+@EnableSpringDataWebSupport
 public class WebConfig implements WebMvcConfigurer {
 
     @Override
@@ -32,5 +40,12 @@ public class WebConfig implements WebMvcConfigurer {
                         "/api/tasks/**", "/api/deadlines/**", "/api/auth/send-verification-link",
                         "/api/auth/verify-email")
                 .excludePathPatterns("/api/auth/login", "/api/auth/register");
+    }
+
+    @Override
+    public void addArgumentResolvers(List<HandlerMethodArgumentResolver> argumentResolvers) {
+        PageableHandlerMethodArgumentResolver resolver = new PageableHandlerMethodArgumentResolver();
+        resolver.setOneIndexedParameters(true);
+        argumentResolvers.add(resolver);
     }
 }
