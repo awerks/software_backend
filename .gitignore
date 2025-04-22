@@ -19,6 +19,16 @@ target/
 *.log
 *.tmp
 *.json
+
+# Application Properties
+src/main/resources/application.properties
+src/main/resources/application.yml
+src/main/resources/application-*.properties
+src/main/resources/application-*.yml
+
+# Test configuration
+src/test/resources/application.properties
+
 ### IntelliJ IDEA ###
 .idea
 *.iws
@@ -39,3 +49,17 @@ build/
 
 ### VS Code ###
 .vscode/
+
+### Environment Variables ###
+.env
+*.env
+.env.*
+!.env.template
+
+### Logs ###
+*.log
+logs/
+
+### OS specific ###
+.DS_Store
+Thumbs.db
