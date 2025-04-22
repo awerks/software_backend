@@ -1,7 +1,3 @@
-<<<<<<< HEAD
-=======
-
->>>>>>> upstream/main
 package com.seproject.backend.util;
 
 import io.jsonwebtoken.Jwts;
@@ -16,16 +12,12 @@ import java.util.Date;
 
 @Component
 public class JwtUtil {
-    @Value("${JWT_SECRET}")
+    @Value("${app.jwt.secret}")
     private String secret;
 
     private final long jwtExpirationMs = 86400000;
 
     public String generateJwtToken(String username, String role) {
-<<<<<<< HEAD
-=======
-        System.out.println("Generating JWT token for user: " + secret);
->>>>>>> upstream/main
         SecretKey key = Keys.hmacShaKeyFor(secret.getBytes(StandardCharsets.UTF_8));
         return Jwts.builder()
                 .setSubject(username)
