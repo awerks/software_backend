@@ -36,7 +36,7 @@ public class ProjectController {
         );
     }
 
-    @GetMapping("{id}")
+    @GetMapping("/{id}")
     public ResponseEntity<Project> getProjectById(@PathVariable("id") Integer id) {
         Optional<Project> project = projectService.getProjectById(id);
 
@@ -48,8 +48,8 @@ public class ProjectController {
         ));
     }
 
-    @PostMapping("{id}")
-    public ResponseEntity<Project> updateProjectById(@RequestBody Project project, @PathVariable("id") Integer projectId) {
+    @PostMapping("/{id}")
+    public ResponseEntity<Project> updateProjectById(@RequestBody Project project, @PathVariable("id") Integer projectId) {  // Changed type to Long
         project.setProjectId(projectId);
 
         return new ResponseEntity<>(
@@ -58,8 +58,8 @@ public class ProjectController {
         );
     }
 
-    @DeleteMapping("{id}")
-    public ResponseEntity<Object> deleteProjectById(@PathVariable("id") Integer projectId) {
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Object> deleteProjectById(@PathVariable("id") Integer projectId) {  // Changed type to Long
         projectService.deleteProjectById(projectId);
 
         return new ResponseEntity<>(

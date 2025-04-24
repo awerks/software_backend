@@ -45,4 +45,13 @@ public class User {
 
     @OneToMany(mappedBy = "createdBy")
     private List<Project> createdProjects;
+
+    @OneToMany(mappedBy = "creator")
+    private List<Teamspace> createdTeamspaces;
+
+    @OneToMany(mappedBy = "creator")
+    private List<Task> taskList;
+
+    @OneToMany(mappedBy = "creator")
+    private List<TaskComment> taskComments;
 }
