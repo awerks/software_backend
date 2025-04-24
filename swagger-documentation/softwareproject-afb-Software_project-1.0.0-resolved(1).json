@@ -1,0 +1,2336 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "Teamspace Project API",
+    "description": "API documentation for the Teamspace Project, which includes user authentication, project management, teamspaces, tasks, chat, permissions, and deadline management.\n",
+    "contact": {
+      "name": "awerks",
+      "email": "sustila24@gmail.com"
+    },
+    "license": {
+      "name": "MIT",
+      "url": "https://github.com/awerks/software_backend/blob/main/LICENSE"
+    },
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "https://virtserver.swaggerhub.com/softwareproject-afb/Software_project/1.0.0",
+      "description": "SwaggerHub API Auto Mocking"
+    },
+    {
+      "url": "https://se-backend.up.railway.app",
+      "description": "Railway hosted server"
+    }
+  ],
+  "security": [
+    {
+      "cookieAuth": []
+    }
+  ],
+  "paths": {
+    "/api/auth/register": {
+      "post": {
+        "tags": [
+          "Authentication"
+        ],
+        "summary": "Register a new user",
+        "description": "Registers a new user account and returns user details upon success.",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UserRegistration"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "User successfully created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SuccessResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Username or email already exists",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": []
+      }
+    },
+    "/api/auth/login": {
+      "post": {
+        "tags": [
+          "Authentication"
+        ],
+        "summary": "User Login",
+        "description": "Authenticates a user using their credentials. On successful login, \nthe server sets an HTTP‑only cookie containing the JWT token (with HttpOnly, Secure) and returns user info.\n",
+        "requestBody": {
+          "description": "User login credentials.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LoginRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful login.",
+            "headers": {
+              "Set-Cookie": {
+                "description": "The HTTP‑only cookie storing the JWT token",
+                "schema": {
+                  "type": "string",
+                  "example": "access_token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...; HttpOnly; Secure"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/User"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized – Invalid credentials.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": []
+      }
+    },
+    "/api/auth/logout": {
+      "post": {
+        "tags": [
+          "Authentication"
+        ],
+        "summary": "Logout a user",
+        "description": "Logs out the user by invalidating the JWT token.",
+        "operationId": "logout",
+        "responses": {
+          "200": {
+            "description": "Logout successful",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SuccessResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/auth/request-reset": {
+      "post": {
+        "tags": [
+          "Authentication"
+        ],
+        "summary": "Request a password reset link",
+        "description": "Generates a password reset token and sends a reset email.",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ResetPasswordRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Reset link sent successfully.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SuccessResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid email format or user not found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": []
+      }
+    },
+    "/api/auth/verify-token": {
+      "post": {
+        "tags": [
+          "Authentication"
+        ],
+        "summary": "Verify if a password reset/email verification token is valid",
+        "description": "Checks if the token exists and is not expired.",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/VerifyToken"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Token is valid.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SuccessResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid or expired token.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": []
+      }
+    },
+    "/api/auth/reset-password": {
+      "post": {
+        "tags": [
+          "Authentication"
+        ],
+        "summary": "Reset the user's password",
+        "description": "Updates the password for the user associated with the provided token.",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ResetPassword"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Password reset successfully.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SuccessResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid token or weak password.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": []
+      }
+    },
+    "/api/auth/protected": {
+      "get": {
+        "tags": [
+          "Example"
+        ],
+        "summary": "Get a protected resource",
+        "description": "An example of a protected resource that requires minimum role.   For example, only users with the 'user' role and higher can access this endpoint.   (role hierarchy, admin > project_manager > teamlead > user)\n",
+        "operationId": "getProtectedResource",
+        "responses": {
+          "200": {
+            "description": "Access granted to protected resource.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SuccessResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized: user not logged in.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Access denied: insufficient permissions.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/projects": {
+      "get": {
+        "tags": [
+          "Projects"
+        ],
+        "summary": "Get a list of all projects",
+        "responses": {
+          "200": {
+            "description": "A list of all projects",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Project"
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "No Projects found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Projects"
+        ],
+        "summary": "Create a new project",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ProjectCreate"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Project created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Project"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/projects/{projectId}": {
+      "get": {
+        "tags": [
+          "Projects"
+        ],
+        "summary": "Get project by ID",
+        "parameters": [
+          {
+            "name": "projectId",
+            "in": "path",
+            "description": "ID of the project",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A single project",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Project"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Project not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Projects"
+        ],
+        "summary": "Update a project by ID",
+        "parameters": [
+          {
+            "name": "projectId",
+            "in": "path",
+            "description": "ID of the project to update",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/projects_projectId_body"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Project updated successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/inline_response_200"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Projects"
+        ],
+        "summary": "Delete a project by ID",
+        "parameters": [
+          {
+            "name": "projectId",
+            "in": "path",
+            "description": "ID of the project to delete",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Project deleted successfully"
+          }
+        }
+      }
+    },
+    "/api/projects/{projectId}/teamspaces": {
+      "post": {
+        "tags": [
+          "Teamspaces"
+        ],
+        "summary": "Create a new teamspace under a specific project",
+        "parameters": [
+          {
+            "name": "projectId",
+            "in": "path",
+            "description": "ID of the project",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TeamspaceCreate"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Teamspace created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Teamspace"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/teamspaces/{teamspaceId}": {
+      "delete": {
+        "tags": [
+          "Teamspaces"
+        ],
+        "summary": "Delete a teamspace",
+        "parameters": [
+          {
+            "name": "teamspaceId",
+            "in": "path",
+            "description": "ID of the teamspace",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Teamspace successfully deleted",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SuccessResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden (insufficient privileges)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Teamspace not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/teamspaces/{teamspaceId}/users": {
+      "post": {
+        "tags": [
+          "Teamspaces"
+        ],
+        "summary": "Add a user to a teamspace",
+        "parameters": [
+          {
+            "name": "teamspaceId",
+            "in": "path",
+            "description": "ID of the teamspace",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AddUserToTeamspaceRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "User added to the teamspace",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TeamspaceUser"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Teamspace or User not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/teamspaces/{teamspaceId}/users/{userId}": {
+      "delete": {
+        "tags": [
+          "Teamspaces"
+        ],
+        "summary": "Remove a user from a teamspace",
+        "parameters": [
+          {
+            "name": "teamspaceId",
+            "in": "path",
+            "description": "ID of the teamspace",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "userId",
+            "in": "path",
+            "description": "ID of the user",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "User removed from the teamspace",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SuccessResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden (insufficient privileges)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Teamspace or User not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/tasks/{teamspaceId}/task": {
+      "post": {
+        "tags": [
+          "Tasks"
+        ],
+        "summary": "Create a new task under a specific teamspace",
+        "parameters": [
+          {
+            "name": "teamspaceId",
+            "in": "path",
+            "description": "ID of the teamspace",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TaskCreate"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Task created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Task"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/tasks/{taskId}/assignees": {
+      "post": {
+        "tags": [
+          "Tasks"
+        ],
+        "summary": "Assign a task to one or more users",
+        "parameters": [
+          {
+            "name": "taskId",
+            "in": "path",
+            "description": "ID of the task",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AssignUsersRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Task assigned to users",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SuccessResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Task or User(s) not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/tasks/{taskId}/teamspaces": {
+      "post": {
+        "tags": [
+          "Tasks"
+        ],
+        "summary": "Associate a task with one or more teamspaces",
+        "parameters": [
+          {
+            "name": "taskId",
+            "in": "path",
+            "description": "ID of the task",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AddTeamspacesRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Task associated with teamspaces",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SuccessResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Task or Teamspace(s) not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/tasks/{taskId}": {
+      "put": {
+        "tags": [
+          "Tasks"
+        ],
+        "summary": "Update the status of an existing task",
+        "parameters": [
+          {
+            "name": "taskId",
+            "in": "path",
+            "description": "ID of the task",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateTaskStatusRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Task status updated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SuccessResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Task not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/tasks/comments": {
+      "post": {
+        "tags": [
+          "Task Comments"
+        ],
+        "summary": "Create a new comment for a specific task",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/tasks_comments_body"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Comment created successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/inline_response_201"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request (e.g., missing parameters or invalid data)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Task not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/tasks/{task_id}/comments": {
+      "get": {
+        "tags": [
+          "Task Comments"
+        ],
+        "summary": "Get all comments for a specific task",
+        "parameters": [
+          {
+            "name": "task_id",
+            "in": "path",
+            "description": "ID of the task whose comments are to be retrieved",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of comments for the task",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/inline_response_200_1"
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Task not found or no comments exist",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/tasks/comments/{comment_id}": {
+      "get": {
+        "tags": [
+          "Task Comments"
+        ],
+        "summary": "Get a specific comment by ID",
+        "parameters": [
+          {
+            "name": "comment_id",
+            "in": "path",
+            "description": "ID of the comment to retrieve",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Comment details",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/inline_response_200_2"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Comment not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Task Comments"
+        ],
+        "summary": "Update a specific comment by ID",
+        "parameters": [
+          {
+            "name": "comment_id",
+            "in": "path",
+            "description": "ID of the comment to be updated",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/comments_comment_id_body"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Comment updated successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/inline_response_200_3"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request (e.g., invalid data)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Comment not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Task Comments"
+        ],
+        "summary": "Delete a specific comment by ID",
+        "parameters": [
+          {
+            "name": "comment_id",
+            "in": "path",
+            "description": "ID of the comment to be deleted",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Comment deleted successfully"
+          },
+          "404": {
+            "description": "Comment not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/teamspaces/{teamspaceId}/chat": {
+      "get": {
+        "tags": [
+          "Chat"
+        ],
+        "summary": "Retrieve chat history for a teamspace",
+        "parameters": [
+          {
+            "name": "teamspaceId",
+            "in": "path",
+            "description": "ID of the teamspace",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Array of chat messages",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ChatMessage"
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Teamspace not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Chat"
+        ],
+        "summary": "Send a chat message to a teamspace",
+        "parameters": [
+          {
+            "name": "teamspaceId",
+            "in": "path",
+            "description": "ID of the teamspace",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ChatMessageCreate"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Chat message created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ChatMessage"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Teamspace not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/teamspaces/{teamspaceId}/permissions/{userId}": {
+      "put": {
+        "tags": [
+          "Permissions"
+        ],
+        "summary": "Update a user's role in a teamspace",
+        "parameters": [
+          {
+            "name": "teamspaceId",
+            "in": "path",
+            "description": "ID of the teamspace",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "userId",
+            "in": "path",
+            "description": "ID of the user",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateRoleRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Role updated successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SuccessResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden (insufficient privileges)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Teamspace or User not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/deadlines/upcoming": {
+      "get": {
+        "tags": [
+          "Deadlines"
+        ],
+        "summary": "Retrieve upcoming deadlines for the logged-in user",
+        "responses": {
+          "200": {
+            "description": "Array of upcoming tasks with deadlines",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/UpcomingDeadline"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized (user not logged in)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/": {
+      "get": {
+        "tags": [
+          "Example"
+        ],
+        "summary": "Hello World Endpoint",
+        "responses": {
+          "200": {
+            "description": "Returns a hello world message",
+            "content": {
+              "text/plain": {
+                "example": "Hello, World!"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/projects/{projectId}/cost-crush": {
+      "post": {
+        "tags": [
+          "Cost"
+        ],
+        "summary": "Perform a cost‑crash (crashing) calculation for a project",
+        "description": "Calculates the minimum‑cost schedule reduction (“crashing”) for the\nproject identified by **projectId**.  \nThe backend automatically gathers **all teamspaces** and **all tasks**\nin the project, together with each task’s normal/crash durations and\ncosts.  \nIf optional optimisation constraints (e.g. *targetDeadline* or\n*maxBudget*) are supplied in the body, they are honoured.\n",
+        "parameters": [
+          {
+            "name": "projectId",
+            "in": "path",
+            "description": "ID of the project to analyse",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "description": "Optional optimisation constraints",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CostCrushRequest"
+              }
+            }
+          },
+          "required": false
+        },
+        "responses": {
+          "200": {
+            "description": "Crashing result",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CostCrushResult"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Project not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/projects/{projectId}/critical-path": {
+      "get": {
+        "tags": [
+          "Schedule"
+        ],
+        "summary": "Calculate the critical path for a project",
+        "description": "Computes the **critical path** across **every task in every teamspace**\nthat belongs to the specified project.  \nReturns the ordered list of task IDs on the path, timing details for\neach task, and the **totalCost** of that path.\n",
+        "parameters": [
+          {
+            "name": "projectId",
+            "in": "path",
+            "description": "ID of the project to analyse",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Critical‑path result",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CriticalPathResult"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Project not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "UserRegistration": {
+        "required": [
+          "email",
+          "firstName",
+          "lastName",
+          "password",
+          "role",
+          "username"
+        ],
+        "type": "object",
+        "properties": {
+          "firstName": {
+            "type": "string",
+            "example": "John"
+          },
+          "lastName": {
+            "type": "string",
+            "example": "Doe"
+          },
+          "email": {
+            "type": "string",
+            "format": "email",
+            "example": "john@example.com"
+          },
+          "birthdate": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "username": {
+            "type": "string",
+            "example": "johndoe"
+          },
+          "password": {
+            "type": "string",
+            "format": "password",
+            "example": "securePassword123"
+          },
+          "role": {
+            "type": "string",
+            "example": "admin"
+          }
+        }
+      },
+      "User": {
+        "type": "object",
+        "properties": {
+          "userId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "firstName": {
+            "type": "string"
+          },
+          "lastName": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string"
+          },
+          "birthdate": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "username": {
+            "type": "string"
+          },
+          "role": {
+            "type": "string"
+          },
+          "successResponse": {
+            "$ref": "#/components/schemas/SuccessResponse"
+          }
+        }
+      },
+      "LoginRequest": {
+        "required": [
+          "password",
+          "username_or_email"
+        ],
+        "type": "object",
+        "properties": {
+          "username_or_email": {
+            "type": "string",
+            "format": "text",
+            "example": "john"
+          },
+          "password": {
+            "type": "string",
+            "format": "password",
+            "example": "securePassword123"
+          }
+        }
+      },
+      "ResetPasswordRequest": {
+        "required": [
+          "username_or_email"
+        ],
+        "type": "object",
+        "properties": {
+          "username_or_email": {
+            "type": "string",
+            "example": "max@gmail.com/max"
+          }
+        }
+      },
+      "ProjectCreate": {
+        "required": [
+          "created_by",
+          "name"
+        ],
+        "type": "object",
+        "properties": {
+          "created_by": {
+            "type": "integer",
+            "example": 17
+          },
+          "name": {
+            "type": "string",
+            "example": "New Project"
+          },
+          "description": {
+            "type": "string",
+            "example": "Project description"
+          }
+        }
+      },
+      "Project": {
+        "type": "object",
+        "properties": {
+          "created_by": {
+            "type": "integer",
+            "example": 17
+          },
+          "projectId": {
+            "type": "integer",
+            "example": 501
+          },
+          "name": {
+            "type": "string",
+            "example": "New Project"
+          },
+          "description": {
+            "type": "string",
+            "example": "Project description"
+          },
+          "creationDate": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2025-03-12T10:00:00Z"
+          },
+          "teamspaces": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Teamspace"
+            }
+          }
+        }
+      },
+      "TeamspaceCreate": {
+        "required": [
+          "name"
+        ],
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "example": "Team Alpha"
+          },
+          "description": {
+            "type": "string",
+            "example": "Teamspace description"
+          }
+        }
+      },
+      "Teamspace": {
+        "type": "object",
+        "properties": {
+          "teamspaceId": {
+            "type": "integer",
+            "example": 301
+          },
+          "projectId": {
+            "type": "integer",
+            "example": 501
+          },
+          "name": {
+            "type": "string",
+            "example": "Team Alpha"
+          },
+          "description": {
+            "type": "string",
+            "example": "Teamspace description"
+          },
+          "creationDate": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2025-03-12T11:00:00Z"
+          },
+          "creatorId": {
+            "type": "integer",
+            "example": 101
+          }
+        }
+      },
+      "AddUserToTeamspaceRequest": {
+        "required": [
+          "userId"
+        ],
+        "type": "object",
+        "properties": {
+          "userId": {
+            "type": "integer",
+            "example": 102
+          },
+          "role": {
+            "type": "string",
+            "example": "teamlead"
+          }
+        }
+      },
+      "TeamspaceUser": {
+        "type": "object",
+        "properties": {
+          "teamspaceId": {
+            "type": "integer",
+            "example": 301
+          },
+          "userId": {
+            "type": "integer",
+            "example": 102
+          },
+          "role": {
+            "type": "string",
+            "example": "teamlead"
+          }
+        }
+      },
+      "TaskCreate": {
+        "required": [
+          "deadline",
+          "name"
+        ],
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "example": "Implement Registration API"
+          },
+          "deadline": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2025-03-20T17:00:00Z"
+          },
+          "description": {
+            "type": "string",
+            "example": "Task description"
+          }
+        }
+      },
+      "Task": {
+        "type": "object",
+        "properties": {
+          "taskId": {
+            "type": "integer",
+            "example": 901
+          },
+          "teamspaceId": {
+            "type": "integer",
+            "example": 501
+          },
+          "name": {
+            "type": "string",
+            "example": "Implement Registration API"
+          },
+          "description": {
+            "type": "string",
+            "example": "Task description"
+          },
+          "creationDate": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2025-03-12T13:00:00Z"
+          },
+          "deadline": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2025-03-20T17:00:00Z"
+          },
+          "status": {
+            "type": "string",
+            "example": "to-do"
+          }
+        }
+      },
+      "AssignUsersRequest": {
+        "required": [
+          "userIds"
+        ],
+        "type": "object",
+        "properties": {
+          "userIds": {
+            "type": "array",
+            "example": [
+              102,
+              103
+            ],
+            "items": {
+              "type": "integer"
+            }
+          }
+        }
+      },
+      "AddTeamspacesRequest": {
+        "required": [
+          "teamspaceIds"
+        ],
+        "type": "object",
+        "properties": {
+          "teamspaceIds": {
+            "type": "array",
+            "example": [
+              301,
+              302
+            ],
+            "items": {
+              "type": "integer"
+            }
+          }
+        }
+      },
+      "UpdateTaskStatusRequest": {
+        "required": [
+          "status"
+        ],
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string",
+            "example": "in-progress"
+          }
+        }
+      },
+      "ChatMessageCreate": {
+        "required": [
+          "message",
+          "senderId"
+        ],
+        "type": "object",
+        "properties": {
+          "senderId": {
+            "type": "integer",
+            "example": 101
+          },
+          "message": {
+            "type": "string",
+            "example": "Hello team!"
+          }
+        }
+      },
+      "ChatMessage": {
+        "type": "object",
+        "properties": {
+          "messageId": {
+            "type": "integer",
+            "example": 701
+          },
+          "teamspaceId": {
+            "type": "integer",
+            "example": 301
+          },
+          "senderId": {
+            "type": "integer",
+            "example": 101
+          },
+          "message": {
+            "type": "string",
+            "example": "Hello team!"
+          },
+          "timestamp": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2025-03-12T12:00:00Z"
+          }
+        }
+      },
+      "UpdateRoleRequest": {
+        "required": [
+          "role"
+        ],
+        "type": "object",
+        "properties": {
+          "role": {
+            "type": "string",
+            "example": "admin"
+          }
+        }
+      },
+      "UpcomingDeadline": {
+        "type": "object",
+        "properties": {
+          "taskId": {
+            "type": "integer",
+            "example": 901
+          },
+          "name": {
+            "type": "string",
+            "example": "Implement Registration API"
+          },
+          "deadline": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2025-03-20T17:00:00Z"
+          },
+          "status": {
+            "type": "string",
+            "example": "to-do"
+          }
+        }
+      },
+      "VerifyToken": {
+        "title": "VerifyToken",
+        "required": [
+          "token"
+        ],
+        "type": "object",
+        "properties": {
+          "token": {
+            "type": "string"
+          }
+        }
+      },
+      "ResetPassword": {
+        "title": "ResetPassword",
+        "required": [
+          "password",
+          "token"
+        ],
+        "type": "object",
+        "properties": {
+          "token": {
+            "type": "string"
+          },
+          "password": {
+            "type": "string",
+            "format": "password"
+          }
+        }
+      },
+      "SuccessResponse": {
+        "title": "SuccessResponse",
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string",
+            "example": "The request was successful."
+          }
+        }
+      },
+      "ErrorResponse": {
+        "title": "ErrorResponse",
+        "type": "object",
+        "properties": {
+          "error": {
+            "type": "string",
+            "example": "Error: request was not successful"
+          }
+        }
+      },
+      "CostCrushRequest": {
+        "type": "object",
+        "properties": {
+          "targetDeadline": {
+            "type": "string",
+            "description": "Target project completion date to reach through crashing",
+            "format": "date-time",
+            "example": "2025-06-30T23:59:59Z"
+          },
+          "maxBudget": {
+            "type": "number",
+            "description": "Upper bound on total project cost after crashing",
+            "example": 20000
+          }
+        },
+        "description": "Optional constraints for the crashing algorithm"
+      },
+      "CostCrushTask": {
+        "type": "object",
+        "properties": {
+          "taskId": {
+            "type": "integer",
+            "example": 123
+          },
+          "originalDuration": {
+            "type": "integer",
+            "description": "Duration (days) before crashing",
+            "example": 10
+          },
+          "crashedDuration": {
+            "type": "integer",
+            "description": "Duration (days) after crashing",
+            "example": 7
+          },
+          "originalCost": {
+            "type": "number",
+            "description": "Cost before crashing",
+            "example": 5000
+          },
+          "crashCost": {
+            "type": "number",
+            "description": "Cost after crashing",
+            "example": 6500
+          }
+        },
+        "description": "Per‑task before/after values produced by the crashing algorithm"
+      },
+      "CostCrushResult": {
+        "type": "object",
+        "properties": {
+          "projectId": {
+            "type": "integer",
+            "example": 42
+          },
+          "totalCost": {
+            "type": "number",
+            "example": 65000
+          },
+          "totalDuration": {
+            "type": "integer",
+            "description": "Project duration (days) after crashing",
+            "example": 120
+          },
+          "schedule": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CostCrushTask"
+            }
+          }
+        }
+      },
+      "CriticalPathTask": {
+        "type": "object",
+        "properties": {
+          "taskId": {
+            "type": "integer",
+            "example": 321
+          },
+          "duration": {
+            "type": "integer",
+            "description": "Task duration (days)",
+            "example": 5
+          },
+          "cost": {
+            "type": "number",
+            "example": 1000
+          },
+          "earliestStart": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2025-05-01T00:00:00Z"
+          },
+          "earliestFinish": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2025-05-06T00:00:00Z"
+          },
+          "latestStart": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2025-05-01T00:00:00Z"
+          },
+          "latestFinish": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2025-05-06T00:00:00Z"
+          },
+          "slack": {
+            "type": "integer",
+            "description": "Slack/float (days)",
+            "example": 0
+          }
+        },
+        "description": "Timing/cost information for each task in the CPM analysis"
+      },
+      "CriticalPathResult": {
+        "type": "object",
+        "properties": {
+          "projectId": {
+            "type": "integer",
+            "example": 42
+          },
+          "criticalPath": {
+            "type": "array",
+            "example": [
+              101,
+              102,
+              110,
+              115
+            ],
+            "items": {
+              "type": "integer"
+            }
+          },
+          "totalDuration": {
+            "type": "integer",
+            "description": "Total project duration (days)",
+            "example": 130
+          },
+          "totalCost": {
+            "type": "number",
+            "description": "Sum of costs of tasks on the critical path",
+            "example": 72000
+          },
+          "tasks": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CriticalPathTask"
+            }
+          }
+        }
+      },
+      "projects_projectId_body": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "example": "AI Research Updated"
+          },
+          "description": {
+            "type": "string",
+            "example": "A project focusing on the latest developments in AI."
+          }
+        }
+      },
+      "inline_response_200": {
+        "type": "object",
+        "properties": {
+          "project_id": {
+            "type": "integer",
+            "example": 1
+          },
+          "name": {
+            "type": "string",
+            "example": "AI Research Updated"
+          },
+          "description": {
+            "type": "string",
+            "example": "A project focusing on the latest developments in AI."
+          },
+          "creation_date": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2023-01-01T00:00:00Z"
+          }
+        }
+      },
+      "tasks_comments_body": {
+        "required": [
+          "content",
+          "task_id",
+          "user_id"
+        ],
+        "type": "object",
+        "properties": {
+          "content": {
+            "type": "string",
+            "description": "The content of the comment",
+            "example": "This is a comment on the task."
+          },
+          "user_id": {
+            "type": "integer",
+            "description": "The ID of the user creating the comment",
+            "example": 123
+          },
+          "task_id": {
+            "type": "integer",
+            "description": "The ID of the task the comment is related to",
+            "example": 456
+          }
+        }
+      },
+      "inline_response_201": {
+        "type": "object",
+        "properties": {
+          "comment_id": {
+            "type": "integer",
+            "description": "The ID of the created comment",
+            "example": 789
+          },
+          "content": {
+            "type": "string",
+            "description": "The content of the comment",
+            "example": "This is a comment on the task."
+          },
+          "created_at": {
+            "type": "string",
+            "description": "The timestamp when the comment was created",
+            "format": "date-time",
+            "example": "2025-04-11T12:34:56Z"
+          },
+          "task_id": {
+            "type": "integer",
+            "description": "The ID of the task the comment is related to",
+            "example": 456
+          },
+          "user_id": {
+            "type": "integer",
+            "description": "The ID of the user who created the comment",
+            "example": 123
+          }
+        }
+      },
+      "inline_response_200_1": {
+        "type": "object",
+        "properties": {
+          "comment_id": {
+            "type": "integer",
+            "example": 101
+          },
+          "content": {
+            "type": "string",
+            "example": "This is a comment on the task."
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2025-04-11T15:30:00Z"
+          },
+          "task_id": {
+            "type": "integer",
+            "example": 42
+          },
+          "user_id": {
+            "type": "integer",
+            "example": 7
+          }
+        }
+      },
+      "inline_response_200_2": {
+        "type": "object",
+        "properties": {
+          "comment_id": {
+            "type": "integer",
+            "description": "The ID of the comment",
+            "example": 789
+          },
+          "content": {
+            "type": "string",
+            "description": "The content of the comment",
+            "example": "This is a comment on the task."
+          },
+          "created_at": {
+            "type": "string",
+            "description": "The timestamp when the comment was created",
+            "format": "date-time",
+            "example": "2025-04-11T12:34:56Z"
+          },
+          "task_id": {
+            "type": "integer",
+            "description": "The ID of the task the comment is related to",
+            "example": 456
+          },
+          "user_id": {
+            "type": "integer",
+            "description": "The ID of the user who created the comment",
+            "example": 123
+          }
+        }
+      },
+      "comments_comment_id_body": {
+        "required": [
+          "content"
+        ],
+        "type": "object",
+        "properties": {
+          "content": {
+            "type": "string",
+            "description": "The updated content of the comment",
+            "example": "Updated comment on the task."
+          }
+        }
+      },
+      "inline_response_200_3": {
+        "type": "object",
+        "properties": {
+          "comment_id": {
+            "type": "integer",
+            "description": "The ID of the updated comment",
+            "example": 789
+          },
+          "content": {
+            "type": "string",
+            "description": "The updated content of the comment",
+            "example": "Updated comment on the task."
+          },
+          "created_at": {
+            "type": "string",
+            "description": "The timestamp when the comment was created",
+            "format": "date-time",
+            "example": "2025-04-11T12:34:56Z"
+          },
+          "task_id": {
+            "type": "integer",
+            "description": "The ID of the task the comment is related to",
+            "example": 456
+          },
+          "user_id": {
+            "type": "integer",
+            "description": "The ID of the user who created the comment",
+            "example": 123
+          }
+        }
+      }
+    },
+    "securitySchemes": {
+      "cookieAuth": {
+        "type": "apiKey",
+        "description": "JWT TOKEN after authentication",
+        "name": "access_token",
+        "in": "cookie"
+      }
+    }
+  }
+}
