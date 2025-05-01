@@ -32,8 +32,10 @@ public class AuthInterceptor implements HandlerInterceptor {
                         jwtUtil.decodeJwtToken(token);
                         String username = jwtUtil.decodeJwtToken(token).getSubject();
                         String role = jwtUtil.decodeJwtToken(token).get("role", String.class);
+                        Integer userId = jwtUtil.decodeJwtToken(token).get("userId", Integer.class);
                         SessionUtil.setUsername(request, username);
                         SessionUtil.setRole(request, role);
+                        SessionUtil.setUserId(request, userId);
                         return true;
                     } catch (Exception e) {
                         JsonResponseUtil.jsonResponse(response, HttpServletResponse.SC_UNAUTHORIZED,

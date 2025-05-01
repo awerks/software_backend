@@ -2,6 +2,8 @@ package com.seproject.backend.entity;
 
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
+import java.util.List;
+
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -40,4 +42,7 @@ public class User {
 
     @Column(name = "verified", nullable = false)
     private boolean verified;
+
+    @OneToMany(mappedBy = "createdBy")
+    private List<Project> createdProjects;
 }
