@@ -1,6 +1,5 @@
 package com.seproject.backend.entity;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -28,9 +27,8 @@ public class Project {
 
     @ManyToOne
     @JoinColumn(referencedColumnName = "user_id", name = "created_by")
-    @JsonIgnore
     private User createdBy;
 
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "project")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "project", fetch = FetchType.LAZY)
     private List<Teamspace> teamspaceList;
 }

@@ -21,8 +21,8 @@ public class ProjectService {
         return projectRepository.save(project);
     }
 
-    public List<Project> getAllProjects() {
-        return projectRepository.findAll();
+    public List<Project> getAllProjectsForGivenUser(Integer userId) {
+        return projectRepository.findAllByCreatedBy_UserId(userId);
     }
 
     public Optional<Project> getProjectById(Integer projectId) {
