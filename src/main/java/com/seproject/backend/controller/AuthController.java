@@ -61,14 +61,12 @@ public class AuthController {
 
         Optional<User> userOptional = userRepository.findByUsernameOrEmail(loginRequest.getUsernameOrEmail());
         if (userOptional.isEmpty()) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                    .body(new ErrorResponse("User not found"));
+            System.out.println("User not found: " + loginRequest.getUsernameOrEmail());
         }
-
         return userRepository.findByUsernameOrEmail(loginRequest.getUsernameOrEmail())
                 .filter(user -> loginRequest.getPassword().equals(user.getPassword()))
                 .map(user -> {
-                    String token = jwtUtil.generateJwtToken(user.getUsername(), user.getRole(), user.getUserId());
+                    String token = jwtUtil.generateJwtToken(user.getUsername(), user.getRole());
                     Cookie jwtTokenCookie = new Cookie("access_token", token);
                     jwtTokenCookie.setHttpOnly(true);
                     jwtTokenCookie.setPath("/");

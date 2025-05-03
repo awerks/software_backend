@@ -10,15 +10,19 @@ import java.util.List;
 
 @Data
 @Entity
-@Table(name = "teamspaces")
-public class Teamspace {
+@Table(name = "tasks")
+public class Task {
+
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "teamspace_id")
-    private Integer id;
+    @Column(name = "task_id")
+    private Integer taskId;
 
-    @Column(name= "name")
+    @Column
+    private Integer teamspaceId;
+
+    @Column(name="name")
     private String name;
 
     @Column(name = "creation_date")
@@ -26,18 +30,24 @@ public class Teamspace {
 
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     @ManyToOne
-    @JoinColumn(name="creator_id", referencedColumnName = "user_id")
+    @JoinColumn(name="created_by", referencedColumnName = "user_id")
     private User creator;
 
-    @JsonIgnore
-    @ManyToOne
-    @JoinColumn(name="project_id", referencedColumnName = "project_id")
-    private Project project;
+    @Column(name = "status")
+    private String status ="TO DO";
+
+    @Column(name = "deadline")
+    private LocalDateTime deadline;
 
     @Column(name="description")
     private String description;
 
-    @ManyToMany(mappedBy = "teamspaces")
     @JsonIgnore
-    private List<Task> tasks;
+    @ManyToMany
+    @JoinTable(
+            name = "task_teamspaces",
+            joinColumns = @JoinColumn(name = "task_id"),
+            inverseJoinColumns = @JoinColumn(name = "teamspace_id")
+    )
+    private List<Teamspace> teamspaces;
 }

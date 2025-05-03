@@ -7,5 +7,4 @@ import lombok.AllArgsConstructor;
 @AllArgsConstructor
 public class SuccessResponse {
     private String message;
-
 }
