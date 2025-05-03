@@ -1,59 +1,34 @@
 package com.seproject.backend.entity;
 
+import jakarta.persistence.*;
+import lombok.Data;
+
 import java.time.LocalDateTime;
+import java.util.List;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Table;
-import jakarta.persistence.Temporal;
-import jakarta.persistence.TemporalType;
-
+@Data
 @Entity
 @Table(name = "projects")
 public class Project {
-   
-    @Column(name = "project_id", nullable = false)
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "project_id")
     private Integer projectId;
 
-    @Column(name = "project_name", nullable = false)
-    private String projectName;
+    @Column(name = "name")
+    private String name;
 
-    @Column
-    @Temporal(TemporalType.TIMESTAMP) // TODO: check the type
-    private LocalDateTime creationDate;
+    @Column(name = "creation_date")
+    private LocalDateTime createdAt = LocalDateTime.now();
 
-    @Column
+    @Column(name = "description")
     private String description;
 
-    public Integer getProjectId() {
-        return projectId;
-    }
+    @ManyToOne
+    @JoinColumn(referencedColumnName = "user_id", name = "created_by")
+    private User createdBy;
 
-    public void setProjectId(Integer projectId) {
-        this.projectId = projectId;
-    } 
-
-    public String getProjectName() {
-        return projectName;
-    }
-
-    public void setProjectName(String projectName) {
-        this.projectName = projectName;
-    }
-
-    public LocalDateTime getCreationDate() {
-        return creationDate;
-    }
-
-    public void setCreationDate(LocalDateTime creationDate) {
-        this.creationDate = creationDate;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "project", fetch = FetchType.LAZY)
+    private List<Teamspace> teamspaceList;
 }

@@ -1,51 +1,29 @@
 package com.seproject.backend.dto;
 
-import java.time.LocalDateTime;
+import java.time.ZoneOffset;
+import java.time.format.DateTimeFormatter;
 
+import com.seproject.backend.entity.Teamspace;
+
+import lombok.Data;
+
+@Data
 public class TeamspaceCreationResponse {
     private Integer teamspaceId;
     private Integer projectId;
     private String name;
-    private LocalDateTime creationDate;
+    private String description;
+    private String creationDate;
     private Integer creatorId;
 
-    public Integer getTeamspaceId() {
-        return teamspaceId;
-    }
-
-    public Integer getProjectId() {
-        return projectId;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public LocalDateTime getCreationDate() {
-        return creationDate;
-    }
-
-    public Integer getCreatorId() {
-        return creatorId;
-    }
-
-    public void setTeamspaceId(Integer teamspaceId) {
-        this.teamspaceId = teamspaceId;
-    }
-
-    public void setProjectId(Integer projectId) {
-        this.projectId = projectId;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public void setCreationDate(LocalDateTime creationDate) {
-        this.creationDate = creationDate;
-    }
-
-    public void setCreatorId(Integer creatorId) {
-        this.creatorId = creatorId;
+    public TeamspaceCreationResponse(Teamspace teamspace) {
+        this.teamspaceId = teamspace.getId();
+        this.projectId = teamspace.getProject().getProjectId();
+        this.name = teamspace.getName();
+        this.description = teamspace.getDescription();
+        this.creationDate = teamspace.getCreationDate()
+                .atZone(ZoneOffset.UTC)
+                .format(DateTimeFormatter.ISO_INSTANT);
+        this.creatorId = teamspace.getCreator().getUserId();
     }
 }
