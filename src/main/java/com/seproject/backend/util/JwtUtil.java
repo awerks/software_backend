@@ -24,6 +24,7 @@ public class JwtUtil {
         return Jwts.builder()
                 .setSubject(username)
                 .claim("role", role)
+                // .claim("userId", userId) // todo
                 .setIssuedAt(new Date())
                 .setExpiration(new Date((new Date()).getTime() + jwtExpirationMs))
                 .signWith(key)
