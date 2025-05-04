@@ -48,6 +48,7 @@ public class TeamspaceService {
         return teamspaceRepository.save(newTeamspace);
     }
 
+    
     public void deleteTeamspace(Integer teamspaceId, Integer actorId) {
         Teamspace teamspace = teamspaceRepository.findById(teamspaceId)
                 .orElseThrow(() -> new ResourceNotFoundException("Teamspace not found"));
@@ -57,5 +58,40 @@ public class TeamspaceService {
         }
 
         teamspaceRepository.delete(teamspace);
+    }
+    
+
+    public Teamspace addUserToTeamspace(Integer teamspaceId, Integer requesterId, Integer userIdToAdd, String role) {
+        Teamspace teamspace = teamspaceRepository.findById(teamspaceId)
+                .orElseThrow(() -> new ResourceNotFoundException("Teamspace not found"));
+
+
+         User userToAdd = userRepository.findById(userIdToAdd)
+            .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+
+        if (!teamspace.getCreator().getUserId().equals(requesterId)) {
+            throw new BadRequestException("You do not have permission to add users to this teamspace.");
+        }
+        if (teamspace.getMembers().contains(userToAdd)) {
+            throw new BadRequestException("User is already a member of this teamspace.");
+        }
+        teamspace.getMembers().add(userToAdd);
+        return teamspaceRepository.save(teamspace);
+    }
+    //should we create another entitiy to keep the memebers and their info there
+
+    public void removeUserFromTeamspace(Integer teamspaceId, Integer userId, Integer requesterId) {
+        Teamspace teamspace = teamspaceRepository.findById(teamspaceId)
+                .orElseThrow(() -> new ResourceNotFoundException("Teamspace not found"));
+
+        User userToRemove = userRepository.findById(userId)
+                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+
+        if (!teamspace.getCreator().getUserId().equals(requesterId)) {
+            throw new ForbiddenException("Forbidden (insufficient privileges)");
+        }
+
+        teamspace.getMembers().remove(userToRemove);
+        teamspaceRepository.save(teamspace);
     }
 }

@@ -5,9 +5,8 @@ import com.seproject.backend.dto.task.AssociateTeamspacesRequest;
 import com.seproject.backend.dto.task.TaskRequestDTO;
 import com.seproject.backend.dto.task.UpdateTaskStatusRequest;
 import com.seproject.backend.entity.Task;
-import com.seproject.backend.exceptions.NotFoundException;
+import com.seproject.backend.exceptions.ResourceNotFoundException;
 import com.seproject.backend.repository.TaskRepository;
-
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -39,12 +38,11 @@ public class TaskServiceImpl implements TaskService {
         ensureTask(taskId);
         // LATER: Integrate with User service / notifications
     }
-    
 
     @Override
     public void linkTeamspaces(Integer taskId, AssociateTeamspacesRequest dto) {
         ensureTask(taskId);
-        // LATER: Persist linkage in a join table if we need it 
+        // LATER: Persist linkage in a join table if we need it
     }
 
     @Override
@@ -55,6 +53,6 @@ public class TaskServiceImpl implements TaskService {
 
     private Task ensureTask(Integer id) {
         return repo.findById(id)
-                   .orElseThrow(() -> new NotFoundException("Task not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Task not found"));
     }
 }

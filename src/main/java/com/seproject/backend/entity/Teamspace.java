@@ -6,7 +6,9 @@ import jakarta.persistence.*;
 import lombok.Data;
 
 import java.time.LocalDateTime;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Data
 @Entity
@@ -40,4 +42,8 @@ public class Teamspace {
     @ManyToMany(mappedBy = "teamspaces")
     @JsonIgnore
     private List<Task> tasks;
+
+    @ManyToMany
+    @JoinTable(name = "teamspace_users", joinColumns = @JoinColumn(name = "teamspace_id"), inverseJoinColumns = @JoinColumn(name = "user_id"))
+    private Set<User> members = new HashSet<>();
 }
