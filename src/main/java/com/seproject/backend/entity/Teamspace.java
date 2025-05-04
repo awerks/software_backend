@@ -18,7 +18,7 @@ public class Teamspace {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "teamspace_id")
-    private Integer id;
+    private Integer teamspaceId;
 
     @Column(name = "name")
     private String name;

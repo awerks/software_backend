@@ -17,7 +17,7 @@ public class TeamspaceCreationResponse {
     private Integer creatorId;
 
     public TeamspaceCreationResponse(Teamspace teamspace) {
-        this.teamspaceId = teamspace.getId();
+        this.teamspaceId = teamspace.getTeamspaceId();
         this.projectId = teamspace.getProject().getProjectId();
         this.name = teamspace.getName();
         this.description = teamspace.getDescription();
