@@ -58,9 +58,7 @@ public class TaskService {
         return taskRepo.save(existing);
     }
 
-    /**
-     * Assign one or more users to a task.
-     */
+
     public void assignUsers(Integer taskId, List<Integer> userIds) {
         Task task = taskRepo.findById(taskId)
             .orElseThrow(() -> new ResourceNotFoundException("Task not found"));
