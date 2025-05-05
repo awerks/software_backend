@@ -56,4 +56,8 @@ public class Task {
     )
     private List<User> assignees;
 
+    @OneToMany(mappedBy = "task", cascade = CascadeType.ALL, orphanRemoval = true)
+private List<TaskComment> comments;
+
+
 }
