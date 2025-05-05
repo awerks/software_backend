@@ -29,15 +29,18 @@ public class TaskService {
     }
 
 
-    public Task createTask(Integer teamspaceId,
-                           CreateTaskRequest req) {
+    public Task createTask(Integer teamspaceId, CreateTaskRequest req, Integer creatorId) {
         Teamspace ts = teamspaceRepo.findById(teamspaceId)
             .orElseThrow(() -> new ResourceNotFoundException("Teamspace not found"));
-
+    
+        User creator = userRepo.findById(creatorId)
+            .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+    
         Task t = new Task();
         t.setName(req.getName());
         t.setDeadline(req.getDeadline());
         t.setDescription(req.getDescription());
+        t.setCreator(creator); 
         t.setTeamspaces(List.of(ts));
         return taskRepo.save(t);
     }

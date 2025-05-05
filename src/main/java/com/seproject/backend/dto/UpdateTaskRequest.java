@@ -1,4 +1,3 @@
-// src/main/java/com/seproject/backend/dto/UpdateTaskRequest.java
 package com.seproject.backend.dto;
 
 import jakarta.validation.constraints.Future;

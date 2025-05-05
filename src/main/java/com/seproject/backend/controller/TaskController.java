@@ -13,6 +13,12 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import com.seproject.backend.util.JwtUtil;
+import io.jsonwebtoken.Claims;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
+import java.util.Arrays;
+import java.util.Optional;
 import java.util.List;
 
 @RestController
@@ -21,16 +27,33 @@ public class TaskController {
 
     private final TaskService taskService;
 
-    public TaskController(TaskService taskService) {
+    private final JwtUtil jwtUtil;
+
+    public TaskController(TaskService taskService, JwtUtil jwtUtil) {
         this.taskService = taskService;
+        this.jwtUtil = jwtUtil;
     }
 
     @PostMapping("/{teamspaceId}/task")
     public ResponseEntity<TaskResponse> addTask(
-            @PathVariable Integer teamspaceId,
-            @Valid @RequestBody CreateTaskRequest req
-    ) {
-        Task created = taskService.createTask(teamspaceId, req);
+        @PathVariable Integer teamspaceId,
+        @Valid @RequestBody CreateTaskRequest req,
+        HttpServletRequest request
+    )
+    {
+    String token = Optional.ofNullable(request.getCookies())
+    .flatMap(cookies -> Arrays.stream(cookies)
+        .filter(c -> "access_token".equals(c.getName()))
+        .findFirst())
+    .map(Cookie::getValue)
+    .orElseThrow(() -> new RuntimeException("No access token"));
+
+    Claims claims = jwtUtil.decodeJwtToken(token);
+    Integer userId = claims.get("userId", Integer.class);
+
+    Task created = taskService.createTask(teamspaceId, req, userId);
+
+
         TaskResponse resp = toResponse(created);
         return ResponseEntity.status(HttpStatus.CREATED).body(resp);
     }
