@@ -14,11 +14,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import com.seproject.backend.util.JwtUtil;
-import io.jsonwebtoken.Claims;
-import jakarta.servlet.http.Cookie;
+import com.seproject.backend.util.SessionUtil;
+
 import jakarta.servlet.http.HttpServletRequest;
-import java.util.Arrays;
-import java.util.Optional;
 import java.util.List;
 
 @RestController
@@ -41,15 +39,10 @@ public class TaskController {
         HttpServletRequest request
     )
     {
-    String token = Optional.ofNullable(request.getCookies())
-    .flatMap(cookies -> Arrays.stream(cookies)
-        .filter(c -> "access_token".equals(c.getName()))
-        .findFirst())
-    .map(Cookie::getValue)
-    .orElseThrow(() -> new RuntimeException("No access token"));
-
-    Claims claims = jwtUtil.decodeJwtToken(token);
-    Integer userId = claims.get("userId", Integer.class);
+    Integer userId = SessionUtil.getUserId(request);
+    if (userId == null) {
+        throw new RuntimeException("No user session found");
+    }
 
     Task created = taskService.createTask(teamspaceId, req, userId);
 
