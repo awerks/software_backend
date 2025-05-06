@@ -46,17 +46,13 @@ public class TaskService {
     }
 
 
-    public Task updateTask(Integer taskId, UpdateTaskRequest req) {
+    public void updateTask(Integer taskId, UpdateTaskRequest req) {
         Task existing = taskRepo.findById(taskId)
             .orElseThrow(() -> new ResourceNotFoundException("Task not found"));
-
-        existing.setName(req.getName());
-        existing.setDeadline(req.getDeadline());
-        existing.setDescription(req.getDescription());
         existing.setStatus(req.getStatus());
-
-        return taskRepo.save(existing);
+        taskRepo.save(existing);
     }
+    
 
 
     public void assignUsers(Integer taskId, List<Integer> userIds) {

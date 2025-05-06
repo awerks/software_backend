@@ -8,14 +8,20 @@ import com.seproject.backend.dto.UpdateTaskRequest;
 import com.seproject.backend.dto.SuccessResponse;
 import com.seproject.backend.entity.Task;
 import com.seproject.backend.exceptions.AccessDeniedException;
+import com.seproject.backend.exceptions.ResourceNotFoundException;
 import com.seproject.backend.service.TaskService;
 import com.seproject.backend.util.SessionUtil;
 import com.seproject.backend.util.JwtUtil;
+import com.seproject.backend.dto.ApiResponse;
+import com.seproject.backend.dto.ErrorResponse;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
+
 
 import java.util.List;
 
@@ -62,15 +68,29 @@ public class TaskController {
     }
 
     @PutMapping("/{taskId}")
-    public ResponseEntity<TaskResponse> updateTask(
+    public ResponseEntity<ApiResponse> updateTask(
             @PathVariable Integer taskId,
             @Valid @RequestBody UpdateTaskRequest req
     ) {
-        Task updated = taskService.updateTask(taskId, req);
-        TaskResponse resp = toResponse(updated);
-        return ResponseEntity.ok(resp);
+        taskService.updateTask(taskId, req);
+        return ResponseEntity
+                .ok(new ApiResponse("The request was successful."));
     }
 
+    @ExceptionHandler(ResourceNotFoundException.class)
+    public ResponseEntity<ErrorResponse> handleNotFound(ResourceNotFoundException ex) {
+        return ResponseEntity
+            .status(HttpStatus.NOT_FOUND)
+            .body(new ErrorResponse("Error: request was not successful"));
+    }
+
+    @ExceptionHandler({ MethodArgumentNotValidException.class, HttpMessageNotReadableException.class })
+    public ResponseEntity<ErrorResponse> handleBadRequest(Exception ex) {
+        return ResponseEntity
+            .status(HttpStatus.BAD_REQUEST)
+            .body(new ErrorResponse("Error: request was not successful"));
+    }
+    
     @DeleteMapping("/{taskId}")
     public ResponseEntity<SuccessResponse> deleteTask(
             @PathVariable Integer taskId,
