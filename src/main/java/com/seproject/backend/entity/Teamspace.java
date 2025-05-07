@@ -32,5 +32,7 @@ public class Teamspace {
     @Column(name = "description")
     private String description;
 
+    
+
     /* add tasks () */
 }
