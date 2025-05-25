@@ -10,6 +10,10 @@
 
 ## [Admin Panel](https://admin-dashboard-se-project.up.railway.app/)
 
+## High Level Architecture Diagram
+
+![High Level Architecture Diagram](./assets/diagram.png)
+
 ## Local documentation in the documentation branch
 
 [View Local Documentation](https://github.com/awerks/software_backend/tree/documentation)
